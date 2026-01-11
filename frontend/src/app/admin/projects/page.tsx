@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/authStore';
-import { adminApi, projectsApi } from '@/lib/api';
+import { adminApi, api } from '@/lib/api';
 import { AdminNav } from '@/components/admin/AdminNav';
 import { Project } from '@/types';
 
@@ -23,7 +23,7 @@ export default function AdminProjectsPage() {
 
   const { data: projectsData, isLoading } = useQuery({
     queryKey: ['admin-projects'],
-    queryFn: () => projectsApi.getProjects(),
+    queryFn: () => api.getProjects(),
     enabled: isAuthenticated,
   });
 

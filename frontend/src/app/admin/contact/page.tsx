@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/authStore';
-import { adminApi, contactApi } from '@/lib/api';
+import { adminApi, api } from '@/lib/api';
 import { AdminNav } from '@/components/admin/AdminNav';
 
 export default function AdminContactPage() {
@@ -20,7 +20,7 @@ export default function AdminContactPage() {
 
   const { data: contactData, isLoading } = useQuery({
     queryKey: ['admin-contact'],
-    queryFn: () => contactApi.getContactInfo(),
+    queryFn: () => api.getContactInfo(),
     enabled: isAuthenticated,
   });
 

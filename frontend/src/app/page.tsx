@@ -12,7 +12,7 @@ export default function HomePage() {
               Explore Cutting-Edge Projects
             </h1>
             <p className="text-xl md:text-2xl text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary mb-8">
-              A curated collection of production-ready applications showcasing modern development practices and innovative solutions.
+              A collection of innovative projects and solutions. Get in touch to have your own custom project built for you.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link

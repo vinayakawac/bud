@@ -1,49 +1,22 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import crypto from 'crypto';
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { successResponse, errorResponse } from '@/lib/utils/response';
+import { hashIP, getClientIP } from '@/lib/utils/hash';
 
 export const dynamic = 'force-dynamic';
 
-const prisma = new PrismaClient();
-
-function hashIP(ip: string): string {
-  return crypto.createHash('sha256').update(ip).digest('hex');
-}
-
-function getClientIP(request: NextRequest): string {
-  const forwarded = request.headers.get('x-forwarded-for');
-  const realIP = request.headers.get('x-real-ip');
-  
-  if (forwarded) {
-    return forwarded.split(',')[0].trim();
-  }
-  
-  if (realIP) {
-    return realIP;
-  }
-  
-  return 'unknown';
-}
-
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { rating, feedback } = body;
+    const { rating, feedback } = await request.json();
 
     if (!rating || rating < 1 || rating > 5) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Rating must be between 1 and 5',
-        },
-        { status: 400 }
-      );
+      return errorResponse('Rating must be between 1 and 5', 400);
     }
 
     const clientIP = getClientIP(request);
     const ipHash = hashIP(clientIP);
 
-    // Check if user has already rated today
+    // Check if user already rated today
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -57,13 +30,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingRating) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'You have already submitted a rating today',
-        },
-        { status: 429 }
-      );
+      return errorResponse('You have already submitted a rating today', 429);
     }
 
     const newRating = await prisma.rating.create({
@@ -74,18 +41,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      data: newRating,
-    }, { status: 201 });
-  } catch (error: any) {
+    return successResponse(newRating, 201);
+  } catch (error) {
     console.error('Error creating rating:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Failed to submit rating',
-      },
-      { status: 500 }
-    );
+    return errorResponse('Failed to submit rating', 500);
   }
 }

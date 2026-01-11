@@ -1,52 +1,32 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { successResponse, errorResponse } from '@/lib/utils/response';
 
 export const dynamic = 'force-dynamic';
-
-const prisma = new PrismaClient();
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const project = await prisma.project.findFirst({
-      where: {
-        id: params.id,
-        isPublic: true,
-      },
+    const project = await prisma.project.findUnique({
+      where: { id: params.id, isPublic: true },
     });
 
     if (!project) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Project not found',
-        },
-        { status: 404 }
-      );
+      return errorResponse('Project not found', 404);
     }
 
-    // Parse JSON strings for PostgreSQL compatibility
-    const parsedProject = {
+    const formattedProject = {
       ...project,
-      techStack: typeof project.techStack === 'string' ? JSON.parse(project.techStack) : project.techStack,
-      previewImages: typeof project.previewImages === 'string' ? JSON.parse(project.previewImages) : project.previewImages,
-      metadata: project.metadata && typeof project.metadata === 'string' ? JSON.parse(project.metadata) : project.metadata,
+      techStack: JSON.parse(project.techStack as string),
+      previewImages: JSON.parse(project.previewImages as string),
+      metadata: project.metadata ? JSON.parse(project.metadata as string) : null,
     };
 
-    return NextResponse.json({
-      success: true,
-      data: parsedProject,
-    });
-  } catch (error: any) {
+    return successResponse(formattedProject);
+  } catch (error) {
     console.error('Error fetching project:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Failed to fetch project',
-      },
-      { status: 500 }
-    );
+    return errorResponse('Failed to fetch project', 500);
   }
 }

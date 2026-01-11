@@ -1,120 +1,63 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import jwt from 'jsonwebtoken';
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { authenticateAdmin } from '@/lib/auth';
+import { successResponse, errorResponse } from '@/lib/utils/response';
 
 export const dynamic = 'force-dynamic';
 
-const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_change_in_production';
-
-function verifyAuth(request: NextRequest) {
-  const authHeader = request.headers.get('authorization');
-  
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null;
-  }
-
-  const token = authHeader.substring(7);
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
-    return decoded;
-  } catch (error) {
-    return null;
-  }
-}
-
 export async function GET(request: NextRequest) {
   try {
-    const auth = verifyAuth(request);
-    
-    if (!auth) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Unauthorized',
-        },
-        { status: 401 }
-      );
-    }
+    authenticateAdmin(request);
 
     const projects = await prisma.project.findMany({
       orderBy: { createdAt: 'desc' },
     });
 
-    // Parse JSON strings
-    const parsedProjects = projects.map((project: any) => ({
+    const formattedProjects = projects.map((project) => ({
       ...project,
-      techStack: typeof project.techStack === 'string' ? JSON.parse(project.techStack) : project.techStack,
-      previewImages: typeof project.previewImages === 'string' ? JSON.parse(project.previewImages) : project.previewImages,
-      metadata: project.metadata && typeof project.metadata === 'string' ? JSON.parse(project.metadata) : project.metadata,
+      techStack: JSON.parse(project.techStack as string),
+      previewImages: JSON.parse(project.previewImages as string),
+      metadata: project.metadata ? JSON.parse(project.metadata as string) : null,
     }));
 
-    return NextResponse.json({
-      success: true,
-      data: parsedProjects,
-      count: parsedProjects.length,
-    });
+    return successResponse(formattedProjects);
   } catch (error: any) {
-    console.error('Error fetching projects:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Failed to fetch projects',
-      },
-      { status: 500 }
-    );
+    if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
+      return errorResponse(error.message, 401);
+    }
+    console.error('Error fetching admin projects:', error);
+    return errorResponse('Failed to fetch projects', 500);
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = verifyAuth(request);
-    
-    if (!auth) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Unauthorized',
-        },
-        { status: 401 }
-      );
-    }
+    authenticateAdmin(request);
 
-    const body = await request.json();
-
-    // Convert arrays/objects to JSON strings
-    const projectData = {
-      ...body,
-      techStack: JSON.stringify(body.techStack),
-      previewImages: JSON.stringify(body.previewImages),
-      metadata: body.metadata ? JSON.stringify(body.metadata) : '{}',
-    };
+    const data = await request.json();
 
     const project = await prisma.project.create({
-      data: projectData,
+      data: {
+        ...data,
+        techStack: JSON.stringify(data.techStack || []),
+        previewImages: JSON.stringify(data.previewImages || []),
+        metadata: data.metadata ? JSON.stringify(data.metadata) : null,
+      },
     });
 
-    // Parse back for response
-    const parsedProject = {
+    const formattedProject = {
       ...project,
-      techStack: JSON.parse(project.techStack),
-      previewImages: JSON.parse(project.previewImages),
-      metadata: project.metadata ? JSON.parse(project.metadata) : null,
+      techStack: JSON.parse(project.techStack as string),
+      previewImages: JSON.parse(project.previewImages as string),
+      metadata: project.metadata ? JSON.parse(project.metadata as string) : null,
     };
 
-    return NextResponse.json({
-      success: true,
-      data: parsedProject,
-    }, { status: 201 });
+    return successResponse(formattedProject, 201);
   } catch (error: any) {
+    if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
+      return errorResponse(error.message, 401);
+    }
     console.error('Error creating project:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Failed to create project',
-      },
-      { status: 500 }
-    );
+    return errorResponse('Failed to create project', 500);
   }
 }

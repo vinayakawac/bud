@@ -1,78 +1,50 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { successResponse, errorResponse } from '@/lib/utils/response';
 
 export const dynamic = 'force-dynamic';
 
-const prisma = new PrismaClient();
-
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
     const tech = searchParams.get('tech');
     const year = searchParams.get('year');
 
     const where: any = { isPublic: true };
 
-    if (category) {
+    if (category && category !== 'all') {
       where.category = category;
     }
 
-    if (tech) {
+    if (tech && tech !== 'all') {
       where.techStack = {
         contains: tech,
       };
     }
 
-    if (year) {
-      const yearNum = parseInt(year, 10);
-      const startDate = new Date(yearNum, 0, 1);
-      const endDate = new Date(yearNum + 1, 0, 1);
-
+    if (year && year !== 'all') {
       where.createdAt = {
-        gte: startDate,
-        lt: endDate,
+        gte: new Date(`${year}-01-01`),
+        lt: new Date(`${parseInt(year) + 1}-01-01`),
       };
     }
 
     const projects = await prisma.project.findMany({
       where,
       orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        techStack: true,
-        category: true,
-        previewImages: true,
-        externalLink: true,
-        metadata: true,
-        createdAt: true,
-        updatedAt: true,
-      },
     });
 
-    // Parse JSON strings for PostgreSQL compatibility
-    const parsedProjects = projects.map((project: any) => ({
+    const formattedProjects = projects.map((project) => ({
       ...project,
-      techStack: typeof project.techStack === 'string' ? JSON.parse(project.techStack) : project.techStack,
-      previewImages: typeof project.previewImages === 'string' ? JSON.parse(project.previewImages) : project.previewImages,
-      metadata: project.metadata && typeof project.metadata === 'string' ? JSON.parse(project.metadata) : project.metadata,
+      techStack: JSON.parse(project.techStack as string),
+      previewImages: JSON.parse(project.previewImages as string),
+      metadata: project.metadata ? JSON.parse(project.metadata as string) : null,
     }));
 
-    return NextResponse.json({
-      success: true,
-      data: parsedProjects,
-      count: parsedProjects.length,
-    });
-  } catch (error: any) {
+    return successResponse(formattedProjects);
+  } catch (error) {
     console.error('Error fetching projects:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Failed to fetch projects',
-      },
-      { status: 500 }
-    );
+    return errorResponse('Failed to fetch projects', 500);
   }
 }

@@ -1,42 +1,25 @@
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { successResponse, errorResponse } from '@/lib/utils/response';
 
 export const dynamic = 'force-dynamic';
-
-const prisma = new PrismaClient();
 
 export async function GET() {
   try {
     const contact = await prisma.contact.findFirst();
 
     if (!contact) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Contact information not found',
-        },
-        { status: 404 }
-      );
+      return errorResponse('Contact information not found', 404);
     }
 
-    // Parse JSON string for PostgreSQL compatibility
-    const parsedContact = {
+    const formattedContact = {
       ...contact,
-      socialLinks: typeof contact.socialLinks === 'string' ? JSON.parse(contact.socialLinks) : contact.socialLinks,
+      socialLinks: contact.socialLinks ? JSON.parse(contact.socialLinks as string) : {},
     };
 
-    return NextResponse.json({
-      success: true,
-      data: parsedContact,
-    });
-  } catch (error: any) {
-    console.error('Error fetching contact info:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Failed to fetch contact information',
-      },
-      { status: 500 }
-    );
+    return successResponse(formattedContact);
+  } catch (error) {
+    console.error('Error fetching contact:', error);
+    return errorResponse('Failed to fetch contact information', 500);
   }
 }

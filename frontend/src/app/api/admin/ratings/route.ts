@@ -1,59 +1,49 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import jwt from 'jsonwebtoken';
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { authenticateAdmin } from '@/lib/auth';
+import { successResponse, errorResponse } from '@/lib/utils/response';
 
 export const dynamic = 'force-dynamic';
 
-const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_change_in_production';
-
-function verifyAuth(request: NextRequest) {
-  const authHeader = request.headers.get('authorization');
-  
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null;
-  }
-
-  const token = authHeader.substring(7);
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
-    return decoded;
-  } catch (error) {
-    return null;
-  }
-}
-
 export async function GET(request: NextRequest) {
   try {
-    const auth = verifyAuth(request);
-    
-    if (!auth) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Unauthorized',
-        },
-        { status: 401 }
-      );
-    }
+    authenticateAdmin(request);
 
     const ratings = await prisma.rating.findMany({
       orderBy: { createdAt: 'desc' },
     });
 
-    return NextResponse.json({
-      success: true,
-      data: ratings,
-    });
+    return successResponse(ratings);
   } catch (error: any) {
+    if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
+      return errorResponse(error.message, 401);
+    }
     console.error('Error fetching ratings:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Failed to fetch ratings',
-      },
-      { status: 500 }
-    );
+    return errorResponse('Failed to fetch ratings', 500);
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    authenticateAdmin(request);
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return errorResponse('Rating ID is required', 400);
+    }
+
+    await prisma.rating.delete({
+      where: { id },
+    });
+
+    return successResponse({ message: 'Rating deleted successfully' });
+  } catch (error: any) {
+    if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
+      return errorResponse(error.message, 401);
+    }
+    console.error('Error deleting rating:', error);
+    return errorResponse('Failed to delete rating', 500);
   }
 }

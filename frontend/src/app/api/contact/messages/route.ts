@@ -1,69 +1,43 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import crypto from 'crypto';
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { successResponse, errorResponse } from '@/lib/utils/response';
 
 export const dynamic = 'force-dynamic';
 
-const prisma = new PrismaClient();
-
-function hashIP(ip: string): string {
-  return crypto.createHash('sha256').update(ip).digest('hex');
-}
-
-function getClientIP(request: NextRequest): string {
-  const forwarded = request.headers.get('x-forwarded-for');
-  const realIP = request.headers.get('x-real-ip');
-  
-  if (forwarded) {
-    return forwarded.split(',')[0].trim();
-  }
-  
-  if (realIP) {
-    return realIP;
-  }
-  
-  return 'unknown';
-}
-
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { name, email, message } = body;
+    const { name, email, message } = await request.json();
 
     if (!name || !email || !message) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Name, email, and message are required',
-        },
-        { status: 400 }
-      );
+      return errorResponse('All fields are required', 400);
     }
-
-    const clientIP = getClientIP(request);
-    const ipHash = hashIP(clientIP);
 
     const contactMessage = await prisma.contactMessage.create({
       data: {
         name,
         email,
         message,
-        ipHash,
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      data: contactMessage,
-    }, { status: 201 });
-  } catch (error: any) {
+    return successResponse(contactMessage, 201);
+  } catch (error) {
     console.error('Error creating contact message:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Failed to send message',
+    return errorResponse('Failed to send message', 500);
+  }
+}
+
+export async function GET() {
+  try {
+    const messages = await prisma.contactMessage.findMany({
+      orderBy: {
+        createdAt: 'desc',
       },
-      { status: 500 }
-    );
+    });
+
+    return successResponse(messages);
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    return errorResponse('Failed to fetch messages', 500);
   }
 }

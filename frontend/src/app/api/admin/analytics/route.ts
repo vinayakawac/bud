@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
     const ratings = await prisma.rating.findMany();
     const averageRating =
       ratings.length > 0
-        ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length
+        ? ratings.reduce((sum: number, r: any) => sum + r.rating, 0) / ratings.length
         : 0;
 
     return NextResponse.json({

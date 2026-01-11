@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Parse JSON strings for PostgreSQL compatibility
-    const parsedProjects = projects.map(project => ({
+    const parsedProjects = projects.map((project: any) => ({
       ...project,
       techStack: typeof project.techStack === 'string' ? JSON.parse(project.techStack) : project.techStack,
       previewImages: typeof project.previewImages === 'string' ? JSON.parse(project.previewImages) : project.previewImages,

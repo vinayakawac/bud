@@ -43,7 +43,7 @@ export default function ContactPage() {
             Get in Touch
           </h1>
           <p className="text-lg text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary">
-            Have questions or want to collaborate? We'd love to hear from you
+            Have questions or want to collaborate? We&apos;d love to hear from you
           </p>
         </div>
 

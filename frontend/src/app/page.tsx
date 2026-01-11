@@ -59,7 +59,7 @@ export default function HomePage() {
                 This platform serves as a comprehensive showcase for production-grade projects spanning various technologies and domains. Each project is carefully selected to demonstrate real-world applications, best practices, and innovative solutions.
               </p>
               <p>
-                Whether you're looking for inspiration, seeking to understand modern development patterns, or interested in exploring diverse tech stacks, you'll find valuable insights here.
+                Whether you&apos;re looking for inspiration, seeking to understand modern development patterns, or interested in exploring diverse tech stacks, you&apos;ll find valuable insights here.
               </p>
               <p>
                 All projects are available for exploration with detailed documentation, technical specifications, and downloadable resources.

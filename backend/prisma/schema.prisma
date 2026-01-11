@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Admin {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  role          String   @default("admin")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("admins")
+}
+
+model Project {
+  id            String   @id @default(uuid())
+  title         String
+  description   String
+  techStack     String   @map("tech_stack")
+  category      String
+  previewImages String   @map("preview_images")
+  externalLink  String   @map("external_link")
+  isPublic      Boolean  @default(true) @map("is_public")
+  metadata      String   @default("{}")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([isPublic])
+  @@index([category])
+  @@index([createdAt])
+  @@map("projects")
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  rating    Int
+  feedback  String?
+  ipHash    String   @map("ip_hash")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([ipHash])
+  @@index([createdAt])
+  @@map("ratings")
+}
+
+model Contact {
+  id          String   @id @default(uuid())
+  email       String
+  phone       String?
+  socialLinks String   @default("{}") @map("social_links")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("contact")
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  message   String
+  ipHash    String   @map("ip_hash")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("contact_messages")
+}

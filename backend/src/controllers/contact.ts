@@ -25,7 +25,7 @@ export const getContactInfo = async (
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         email: contact.email,

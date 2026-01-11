@@ -39,7 +39,7 @@ export const createRating = async (
       },
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       data: {
         id: newRating.id,

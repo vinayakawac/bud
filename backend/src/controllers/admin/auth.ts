@@ -36,10 +36,10 @@ export const login = async (
         role: admin.role,
       },
       config.jwt.secret,
-      { expiresIn: config.jwt.expiresIn }
+      { expiresIn: config.jwt.expiresIn } as any
     );
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         token,

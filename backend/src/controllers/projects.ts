@@ -99,7 +99,7 @@ export const getProjectById = async (
       metadata: project.metadata ? JSON.parse(project.metadata) : null,
     };
 
-    res.json({
+    return res.json({
       success: true,
       data: parsedProject,
     });

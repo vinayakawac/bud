@@ -61,7 +61,7 @@ export const deleteRating = async (
       where: { id },
     });
 
-    res.json({
+    return res.json({
       success: true,
       message: 'Rating deleted successfully',
     });

@@ -24,7 +24,7 @@ async function main() {
   console.log('✅ Admin created:', admin.email);
 
   // Create contact info
-  const contact = await prisma.contact.upsert({
+  await prisma.contact.upsert({
     where: { id: '00000000-0000-0000-0000-000000000001' },
     update: {},
     create: {

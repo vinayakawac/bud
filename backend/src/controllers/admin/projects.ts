@@ -82,7 +82,7 @@ export const updateProject = async (
       metadata: updatedProject.metadata ? JSON.parse(updatedProject.metadata) : null,
     };
 
-    res.json({
+    return res.json({
       success: true,
       data: parsedProject,
     });
@@ -114,7 +114,7 @@ export const deleteProject = async (
       where: { id },
     });
 
-    res.json({
+    return res.json({
       success: true,
       message: 'Project deleted successfully',
     });

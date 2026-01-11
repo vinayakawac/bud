@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     });
 
-    const formattedProjects = projects.map((project) => ({
+    const formattedProjects = projects.map((project: any) => ({
       ...project,
       techStack: JSON.parse(project.techStack as string),
       previewImages: JSON.parse(project.previewImages as string),

@@ -1,39 +1,51 @@
 'use client';
 
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
-import { adminApi } from '@/lib/api';
-import { useAuthStore } from '@/store/authStore';
 
 export function LoginForm() {
   const router = useRouter();
-  const setAuth = useAuthStore((state) => state.setAuth);
   const [credentials, setCredentials] = useState({
     email: '',
     password: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const mutation = useMutation({
-    mutationFn: (data: typeof credentials) => adminApi.login(data),
-    onSuccess: (response) => {
-      setAuth(response.data.token, response.data.admin);
-      toast.success('Login successful');
-      router.push('/admin/dashboard');
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.error || 'Login failed');
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    mutation.mutate(credentials);
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(credentials),
+      });
+
+      if (response.ok) {
+        router.push('/admin/dashboard');
+        router.refresh();
+      } else {
+        const data = await response.json();
+        setError(data.error || 'Login failed');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="bg-card border border-border rounded-lg p-8">
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label
@@ -77,10 +89,10 @@ export function LoginForm() {
 
         <button
           type="submit"
-          disabled={mutation.isPending}
+          disabled={isLoading}
           className="w-full px-8 py-4 bg-accent text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {mutation.isPending ? 'Logging in...' : 'Login'}
+          {isLoading ? 'Logging in...' : 'Login'}
         </button>
       </form>
     </div>

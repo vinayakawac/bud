@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       metadata: p.metadata ? JSON.parse(p.metadata) : null,
     }));
 
-    return success(formatted);
+    return success({ projects: formatted });
   } catch (err) {
     console.error('GET /api/admin/projects error:', err);
     return serverError();

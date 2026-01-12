@@ -36,7 +36,7 @@ export default function AdminProjectsPage() {
 
       if (response.ok) {
         const data = await response.json();
-        setProjects(data.projects || []);
+        setProjects(data.data?.projects || []);
       }
     } catch (error) {
       console.error('Error fetching projects:', error);

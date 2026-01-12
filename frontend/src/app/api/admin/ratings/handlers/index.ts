@@ -14,7 +14,21 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     });
 
-    return success(ratings);
+    // Calculate stats
+    const total = ratings.length;
+    const average = total > 0 
+      ? ratings.reduce((sum, r) => sum + r.rating, 0) / total 
+      : 0;
+    
+    const distribution = ratings.reduce((acc, r) => {
+      acc[r.rating] = (acc[r.rating] || 0) + 1;
+      return acc;
+    }, {} as Record<number, number>);
+
+    return success({ 
+      ratings, 
+      stats: { total, average, distribution }
+    });
   } catch (err) {
     console.error('GET /api/admin/ratings error:', err);
     return serverError();

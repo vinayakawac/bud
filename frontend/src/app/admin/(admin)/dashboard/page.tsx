@@ -1,44 +1,62 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { useAuthStore } from '@/store/authStore';
-import { adminApi } from '@/lib/api';
-import { AdminNav } from '@/components/admin/AdminNav';
+
+interface Analytics {
+  projects: {
+    total: number;
+    public: number;
+  };
+  ratings: {
+    total: number;
+    average: number;
+  };
+  messages: {
+    total: number;
+    unread: number;
+  };
+}
 
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const { isAuthenticated, token } = useAuthStore();
+  const [analytics, setAnalytics] = useState<Analytics | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/admin/login');
+    fetchAnalytics();
+  }, []);
+
+  const fetchAnalytics = async () => {
+    try {
+      const response = await fetch('/api/admin/analytics', {
+        credentials: 'include',
+      });
+
+      if (response.status === 401) {
+        router.push('/admin/login');
+        return;
+      }
+
+      if (response.ok) {
+        const data = await response.json();
+        setAnalytics(data);
+      }
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [isAuthenticated, router]);
-
-  const { data: analyticsData, isLoading } = useQuery({
-    queryKey: ['analytics'],
-    queryFn: () => adminApi.getAnalytics(token!),
-    enabled: isAuthenticated,
-  });
-
-  const analytics = analyticsData?.data;
-
-  if (!isAuthenticated) {
-    return null;
-  }
+  };
 
   return (
-    <div className="min-h-screen py-8">
+    <div className="min-h-screen bg-bg py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-textPrimary">
             Admin Dashboard
           </h1>
         </div>
-
-        <AdminNav />
 
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-6 text-textPrimary">

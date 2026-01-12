@@ -32,8 +32,15 @@ export async function POST(request: NextRequest) {
       return error('All fields are required');
     }
 
+    // Get IP address and hash it
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || 
+               request.headers.get('x-real-ip') || 
+               'unknown';
+    const crypto = require('crypto');
+    const ipHash = crypto.createHash('sha256').update(ip).digest('hex');
+
     const contactMessage = await db.contactMessage.create({
-      data: { name, email, message },
+      data: { name, email, message, ipHash },
     });
 
     return success(contactMessage, 201);

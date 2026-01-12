@@ -9,26 +9,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        dark: {
-          bg: 'var(--dark-bg)',
-          surface: 'var(--dark-surface)',
-          border: 'var(--dark-border)',
-          text: {
-            primary: 'var(--dark-text-primary)',
-            secondary: 'var(--dark-text-secondary)',
-          },
-          accent: 'var(--dark-accent)',
-        },
-        light: {
-          bg: 'var(--light-bg)',
-          surface: 'var(--light-surface)',
-          border: 'var(--light-border)',
-          text: {
-            primary: 'var(--light-text-primary)',
-            secondary: 'var(--light-text-secondary)',
-          },
-          accent: 'var(--light-accent)',
-        },
+        bg: 'var(--bg)',
+        bgSecondary: 'var(--bg-secondary)',
+        card: 'var(--card)',
+        cardHover: 'var(--card-hover)',
+        textPrimary: 'var(--text-primary)',
+        textSecondary: 'var(--text-secondary)',
+        border: 'var(--border)',
+        borderHover: 'var(--border-hover)',
+        accent: 'var(--accent)',
+        accentHover: 'var(--accent-hover)',
+        inputBg: 'var(--input-bg)',
+        inputBorder: 'var(--input-border)',
       },
       fontFamily: {
         sans: ['var(--font-poppins)', 'system-ui', 'sans-serif'],

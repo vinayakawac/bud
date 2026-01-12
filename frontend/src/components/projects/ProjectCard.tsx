@@ -9,7 +9,7 @@ interface ProjectCardProps {
 export function ProjectCard({ project }: ProjectCardProps) {
   return (
     <Link href={`/projects/${project.id}`}>
-      <div className="group bg-dark-surface dark:bg-dark-surface light:bg-light-surface border border-dark-border dark:border-dark-border light:border-light-border rounded-lg overflow-hidden hover:border-dark-accent dark:hover:border-dark-accent light:hover:border-light-accent transition-all duration-300 h-full flex flex-col">
+      <div className="group bg-card border border-border rounded-lg overflow-hidden hover:border-borderHover transition-all duration-300 h-full flex flex-col">
         {project.previewImages?.[0] && (
           <div className="relative aspect-video overflow-hidden">
             <Image
@@ -23,16 +23,16 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
         <div className="p-6 flex-1 flex flex-col">
           <div className="mb-3">
-            <span className="text-xs px-2 py-1 bg-dark-bg dark:bg-dark-bg light:bg-light-bg border border-dark-border dark:border-dark-border light:border-light-border rounded text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary">
+            <span className="text-xs px-2 py-1 bg-bgSecondary border border-border rounded text-textSecondary">
               {project.category}
             </span>
           </div>
 
-          <h3 className="text-xl font-bold mb-2 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary group-hover:text-dark-accent dark:group-hover:text-dark-accent light:group-hover:text-light-accent transition-colors">
+          <h3 className="text-xl font-bold mb-2 text-textPrimary group-hover:text-accent transition-colors">
             {project.title}
           </h3>
 
-          <p className="text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary mb-4 line-clamp-3 flex-1">
+          <p className="text-textSecondary mb-4 line-clamp-3 flex-1">
             {project.description.split('\n')[0].replace(/^#+ /, '')}
           </p>
 
@@ -40,13 +40,13 @@ export function ProjectCard({ project }: ProjectCardProps) {
             {project.techStack.slice(0, 3).map((tech) => (
               <span
                 key={tech}
-                className="text-xs px-2 py-1 bg-dark-accent/10 dark:bg-dark-accent/10 light:bg-light-accent/10 text-dark-accent dark:text-dark-accent light:text-light-accent rounded"
+                className="text-xs px-2 py-1 bg-accent/10 text-accent rounded"
               >
                 {tech}
               </span>
             ))}
             {project.techStack.length > 3 && (
-              <span className="text-xs px-2 py-1 text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary">
+              <span className="text-xs px-2 py-1 text-textSecondary">
                 +{project.techStack.length - 3} more
               </span>
             )}

@@ -13,13 +13,26 @@ export function ThemeToggle() {
 
     const currentTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
     setTheme(currentTheme);
+    
+    // Apply theme class to html element
+    if (currentTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }, []);
 
   const toggleTheme = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
-    document.documentElement.classList.toggle('light', newTheme === 'light');
+    
+    // Toggle dark class on html element
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   };
 
   return (

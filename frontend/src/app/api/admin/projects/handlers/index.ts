@@ -1,16 +1,36 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/lib/server/db';
-import { authenticateAdmin } from '@/lib/server/auth';
+import { verifyToken } from '@/lib/server/auth';
 import { success, unauthorized, serverError } from '@/lib/server/response';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    const auth = authenticateAdmin(request);
-    if (!auth) return unauthorized();
+    const token = request.cookies.get('admin_token')?.value;
+    
+    if (!token) {
+      return unauthorized();
+    }
 
+    const payload = verifyToken(token);
+    
+    if (payload.role !== 'admin') {
+      return unauthorized();
+    }
+
+    // Admin sees ALL projects - no filters
+    // This is the superset view (public and creator APIs are subsets)
     const projects = await db.project.findMany({
+      include: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
       orderBy: { createdAt: 'desc' },
     });
 
@@ -30,8 +50,17 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = authenticateAdmin(request);
-    if (!auth) return unauthorized();
+    const token = request.cookies.get('admin_token')?.value;
+    
+    if (!token) {
+      return unauthorized();
+    }
+
+    const payload = verifyToken(token);
+    
+    if (payload.role !== 'admin') {
+      return unauthorized();
+    }
 
     const data = await request.json();
 

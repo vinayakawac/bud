@@ -10,6 +10,16 @@ interface Rating {
   createdAt: string;
 }
 
+interface ProjectRating {
+  projectId: string;
+  projectTitle: string;
+  creatorName: string;
+  isPublic: boolean;
+  ratingsCount: number;
+  averageRating: number | null;
+  ratings: Rating[];
+}
+
 interface Stats {
   total: number;
   average: number;
@@ -17,8 +27,9 @@ interface Stats {
 }
 
 export default function AdminRatingsPage() {
-  const [ratings, setRatings] = useState<Rating[]>([]);
+  const [projects, setProjects] = useState<ProjectRating[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
+  const [expandedProject, setExpandedProject] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -42,7 +53,7 @@ export default function AdminRatingsPage() {
       }
 
       const data = await response.json();
-      setRatings(data.ratings || []);
+      setProjects(data.projects || []);
       setStats(data.stats || null);
     } catch (error) {
       console.error('Error fetching ratings:', error);
@@ -94,7 +105,7 @@ export default function AdminRatingsPage() {
             <div className="bg-card border border-border rounded-lg p-6">
               <div className="text-sm text-textSecondary mb-1">Average Rating</div>
               <div className="text-3xl font-bold text-textPrimary">
-                {stats.average.toFixed(1)} / 5
+                {stats.average > 0 ? stats.average.toFixed(1) : 'N/A'} {stats.average > 0 && '/ 5'}
               </div>
             </div>
             <div className="bg-card border border-border rounded-lg p-6">
@@ -114,13 +125,19 @@ export default function AdminRatingsPage() {
             <thead className="bg-card border-b border-border">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
-                  Rating
+                  Project
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
-                  Feedback
+                  Creator
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
-                  Date
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                  Ratings
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                  Average
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
                   Actions
@@ -128,30 +145,88 @@ export default function AdminRatingsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {ratings.map((rating) => (
-                <tr key={rating.id} className="hover:bg-bg/50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <span className="text-textPrimary font-semibold">{rating.rating}</span>
-                      <span className="text-accent ml-1">★</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-textSecondary max-w-md truncate">
-                    {rating.feedback || '—'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">
-                    {new Date(rating.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <button
-                      onClick={() => deleteRating(rating.id)}
-                      className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded"
-                    >
-                      Delete
-                    </button>
+              {projects.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-textSecondary">
+                    No projects yet. Projects will appear here once created.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                projects.map((project) => (
+                  <>
+                    <tr key={project.projectId} className="hover:bg-bg/50">
+                      <td className="px-6 py-4 text-sm text-textPrimary font-medium">
+                        {project.projectTitle}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">
+                        {project.creatorName}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`px-2 py-1 text-xs rounded-full ${
+                            project.isPublic
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                              : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+                          }`}
+                        >
+                          {project.isPublic ? 'Public' : 'Private'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textPrimary">
+                        {project.ratingsCount}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textPrimary">
+                        {project.averageRating ? (
+                          <span>{project.averageRating.toFixed(1)} ★</span>
+                        ) : (
+                          <span className="text-textSecondary">No ratings yet</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {project.ratingsCount > 0 && (
+                          <button
+                            onClick={() => setExpandedProject(
+                              expandedProject === project.projectId ? null : project.projectId
+                            )}
+                            className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded"
+                          >
+                            {expandedProject === project.projectId ? 'Hide' : 'View'} Details
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                    {expandedProject === project.projectId && project.ratings.length > 0 && (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-4 bg-bg/30">
+                          <div className="space-y-3">
+                            {project.ratings.map((rating) => (
+                              <div key={rating.id} className="border border-border rounded p-3 bg-card flex justify-between items-start">
+                                <div>
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="font-semibold text-textPrimary">{rating.rating} ★</span>
+                                    <span className="text-xs text-textSecondary">
+                                      {new Date(rating.createdAt).toLocaleDateString()}
+                                    </span>
+                                  </div>
+                                  <div className="text-sm text-textSecondary">
+                                    {rating.feedback || 'No feedback provided'}
+                                  </div>
+                                </div>
+                                <button
+                                  onClick={() => deleteRating(rating.id)}
+                                  className="px-2 py-1 text-xs bg-red-500 hover:bg-red-600 text-white rounded"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </>
+                ))
+              )}
             </tbody>
           </table>
         </div>

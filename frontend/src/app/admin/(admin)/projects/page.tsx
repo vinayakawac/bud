@@ -121,47 +121,55 @@ export default function AdminProjectsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {projects.map((project) => (
-                <tr key={project.id} className="hover:bg-bg/50">
-                  <td className="px-6 py-4 text-sm text-textPrimary">
-                    {project.title}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">
-                    {project.category}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">
-                    {project.creator?.name || 'Admin'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        project.isPublic
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                          : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-                      }`}
-                    >
-                      {project.isPublic ? 'Public' : 'Private'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">
-                    {new Date(project.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                    <button
-                      onClick={() => togglePublic(project.id, project.isPublic)}
-                      className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded"
-                    >
-                      {project.isPublic ? 'Unpublish' : 'Publish'}
-                    </button>
-                    <button
-                      onClick={() => deleteProject(project.id)}
-                      className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded"
-                    >
-                      Delete
-                    </button>
+              {projects.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-textSecondary">
+                    No projects yet. Projects will appear here once created by admins or creators.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                projects.map((project) => (
+                  <tr key={project.id} className="hover:bg-bg/50">
+                    <td className="px-6 py-4 text-sm text-textPrimary">
+                      {project.title}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">
+                      {project.category}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">
+                      {project.creator?.name || 'Admin'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          project.isPublic
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                            : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+                        }`}
+                      >
+                        {project.isPublic ? 'Public' : 'Private'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">
+                      {new Date(project.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                      <button
+                        onClick={() => togglePublic(project.id, project.isPublic)}
+                        className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded"
+                      >
+                        {project.isPublic ? 'Unpublish' : 'Publish'}
+                      </button>
+                      <button
+                        onClick={() => deleteProject(project.id)}
+                        className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

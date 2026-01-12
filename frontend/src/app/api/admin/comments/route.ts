@@ -27,7 +27,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    // Fetch top-level comments with replies
     const comments = await db.comment.findMany({
+      where: {
+        parentId: null, // Only root comments
+      },
       include: {
         project: {
           select: {
@@ -38,6 +42,11 @@ export async function GET(request: NextRequest) {
                 name: true,
               },
             },
+          },
+        },
+        replies: {
+          orderBy: {
+            createdAt: 'asc',
           },
         },
       },
@@ -51,6 +60,51 @@ export async function GET(request: NextRequest) {
     console.error('Error fetching comments:', error);
     return NextResponse.json(
       { error: 'Failed to fetch comments' },
+      { status: 500 }
+    );
+  }
+}
+
+// POST endpoint for admin replies
+export async function POST(request: NextRequest) {
+  try {
+    const token = request.cookies.get('admin_token')?.value;
+    
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const payload = verifyToken(token);
+    
+    if (payload.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const { projectId, parentId, content } = await request.json();
+
+    if (!projectId || !parentId || !content) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    const reply = await db.comment.create({
+      data: {
+        projectId,
+        parentId,
+        authorType: 'admin',
+        name: 'Admin',
+        email: 'admin@system',
+        content,
+      },
+    });
+
+    return NextResponse.json({ reply }, { status: 201 });
+  } catch (error) {
+    console.error('Error creating reply:', error);
+    return NextResponse.json(
+      { error: 'Failed to create reply' },
       { status: 500 }
     );
   }

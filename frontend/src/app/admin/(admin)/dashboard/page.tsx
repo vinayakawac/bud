@@ -79,10 +79,10 @@ export default function AdminDashboardPage() {
                   Total Projects
                 </h3>
                 <p className="text-4xl font-bold text-textPrimary">
-                  {analytics?.projects.total || 0}
+                  {analytics?.projects?.total || 0}
                 </p>
                 <p className="text-sm text-textSecondary mt-2">
-                  {analytics?.projects.public || 0} public
+                  {analytics?.projects?.public || 0} public
                 </p>
               </div>
 
@@ -91,10 +91,10 @@ export default function AdminDashboardPage() {
                   Total Ratings
                 </h3>
                 <p className="text-4xl font-bold text-textPrimary">
-                  {analytics?.ratings.total || 0}
+                  {analytics?.ratings?.total || 0}
                 </p>
                 <p className="text-sm text-textSecondary mt-2">
-                  Average: {analytics?.ratings.average.toFixed(1) || '0.0'} ★
+                  Average: {(analytics?.ratings?.average || 0).toFixed(1)} ★
                 </p>
               </div>
 
@@ -103,7 +103,7 @@ export default function AdminDashboardPage() {
                   Total Messages
                 </h3>
                 <p className="text-4xl font-bold text-textPrimary">
-                  {analytics?.messages.total || 0}
+                  {analytics?.messages?.total || 0}
                 </p>
               </div>
             </div>

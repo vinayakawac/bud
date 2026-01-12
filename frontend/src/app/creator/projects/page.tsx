@@ -141,7 +141,9 @@ export default function CreatorProjectsPage() {
 
         {projects.length === 0 ? (
           <div className="bg-card border border-border rounded-lg p-12 text-center">
-            <div className="text-6xl mb-4">📁</div>
+            <svg className="w-20 h-20 text-textSecondary mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+            </svg>
             <h2 className="text-2xl font-semibold text-textPrimary mb-2">
               No projects yet
             </h2>

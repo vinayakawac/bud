@@ -1,199 +1,93 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAuthStore } from '@/store/authStore';
-import { adminApi, api } from '@/lib/api';
-import { AdminNav } from '@/components/admin/AdminNav';
 
-export default function AdminContactPage() {
+interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  createdAt: string;
+}
+
+export default function AdminContactsPage() {
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const { isAuthenticated, token } = useAuthStore();
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/admin/login');
+    fetchMessages();
+  }, []);
+
+  const fetchMessages = async () => {
+    try {
+      const response = await fetch('/api/admin/messages', {
+        credentials: 'include',
+      });
+
+      if (response.status === 401) {
+        router.push('/admin/login');
+        return;
+      }
+
+      if (response.ok) {
+        const data = await response.json();
+        setMessages(data.messages || []);
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    } finally {
+      setLoading(false);
     }
-  }, [isAuthenticated, router]);
-
-  const { data: contactData, isLoading } = useQuery({
-    queryKey: ['admin-contact'],
-    queryFn: () => api.getContactInfo(),
-    enabled: isAuthenticated,
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: (data: any) => adminApi.updateContactInfo(token!, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-contact'] });
-      alert('Contact information updated successfully!');
-    },
-    onError: (error: any) => {
-      alert(`Error: ${error.response?.data?.error || 'Failed to update contact info'}`);
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-
-    const data = {
-      email: formData.get('email') as string,
-      phone: formData.get('phone') as string,
-      socialLinks: {
-        github: formData.get('github') as string,
-        linkedin: formData.get('linkedin') as string,
-        twitter: formData.get('twitter') as string,
-      },
-    };
-
-    updateMutation.mutate(data);
   };
 
-  if (!isAuthenticated) {
-    return null;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-bg py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center text-textSecondary">Loading messages...</div>
+        </div>
+      </div>
+    );
   }
 
-  const contact = contactData?.data;
-
   return (
-    <div className="min-h-screen py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-textPrimary">Contact Information</h1>
-        </div>
+    <div className="min-h-screen bg-bg py-12 px-4">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold text-textPrimary mb-8">
+          Contact Messages
+        </h1>
 
-        <AdminNav />
-
-        <div className="mt-8 max-w-3xl">
-          {isLoading ? (
-            <div className="text-textSecondary">Loading contact information...</div>
-          ) : (
-            <div className="bg-card border border-border rounded-lg p-6">
-              <h2 className="text-2xl font-bold mb-6 text-textPrimary">
-                Update Contact Details
-              </h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-4">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className="bg-card border border-border rounded-lg p-6"
+            >
+              <div className="flex items-start justify-between mb-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-textPrimary">
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    defaultValue={contact?.email}
-                    required
-                    className="w-full px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
-                    placeholder="contact@example.com"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-textPrimary">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    defaultValue={contact?.phone || ''}
-                    className="w-full px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
-                    placeholder="+1234567890"
-                  />
-                </div>
-
-                <div className="border-t border-border pt-6">
-                  <h3 className="text-lg font-semibold mb-4 text-textPrimary">
-                    Social Media Links
+                  <h3 className="font-semibold text-textPrimary mb-1">
+                    {message.name}
                   </h3>
-
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-2 text-textPrimary">
-                        GitHub Profile
-                      </label>
-                      <input
-                        type="url"
-                        name="github"
-                        defaultValue={contact?.socialLinks?.github || ''}
-                        className="w-full px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
-                        placeholder="https://github.com/username"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2 text-textPrimary">
-                        LinkedIn Profile
-                      </label>
-                      <input
-                        type="url"
-                        name="linkedin"
-                        defaultValue={contact?.socialLinks?.linkedin || ''}
-                        className="w-full px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
-                        placeholder="https://linkedin.com/in/username"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2 text-textPrimary">
-                        Twitter Profile
-                      </label>
-                      <input
-                        type="url"
-                        name="twitter"
-                        defaultValue={contact?.socialLinks?.twitter || ''}
-                        className="w-full px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
-                        placeholder="https://twitter.com/username"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4">
-                  <button
-                    type="submit"
-                    disabled={updateMutation.isPending}
-                    className="px-6 py-3 bg-accent hover:opacity-90 text-white rounded-lg transition-opacity disabled:opacity-50 font-medium"
+                  <a
+                    href={`mailto:${message.email}`}
+                    className="text-sm text-accent hover:underline"
                   >
-                    {updateMutation.isPending ? 'Updating...' : 'Update Contact Information'}
-                  </button>
+                    {message.email}
+                  </a>
                 </div>
-              </form>
+                <div className="text-sm text-textSecondary">
+                  {new Date(message.createdAt).toLocaleDateString()}
+                </div>
+              </div>
+              <p className="text-textSecondary whitespace-pre-wrap">{message.message}</p>
+            </div>
+          ))}
 
-              {contact && (
-                <div className="mt-8 pt-6 border-t border-border">
-                  <h3 className="text-lg font-semibold mb-4 text-textPrimary">
-                    Current Contact Information
-                  </h3>
-                  <div className="space-y-2 text-sm text-textSecondary">
-                    <p>
-                      <span className="font-medium">Email:</span> {contact.email}
-                    </p>
-                    {contact.phone && (
-                      <p>
-                        <span className="font-medium">Phone:</span> {contact.phone}
-                      </p>
-                    )}
-                    {contact.socialLinks && (
-                      <div className="mt-3">
-                        <p className="font-medium mb-2">Social Links:</p>
-                        <ul className="space-y-1 ml-4">
-                          {contact.socialLinks.github && (
-                            <li>GitHub: {contact.socialLinks.github}</li>
-                          )}
-                          {contact.socialLinks.linkedin && (
-                            <li>LinkedIn: {contact.socialLinks.linkedin}</li>
-                          )}
-                          {contact.socialLinks.twitter && (
-                            <li>Twitter: {contact.socialLinks.twitter}</li>
-                          )}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+          {messages.length === 0 && (
+            <div className="text-center text-textSecondary py-8">
+              No messages yet
             </div>
           )}
         </div>

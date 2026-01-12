@@ -65,7 +65,15 @@ export function Header() {
             </div>
           </div>
 
-          <ThemeToggle />
+          <div className="flex items-center gap-4">
+            <Link
+              href="/creators/apply"
+              className="hidden md:block px-4 py-2 bg-accent text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium"
+            >
+              Become a Creator
+            </Link>
+            <ThemeToggle />
+          </div>
         </div>
       </nav>
     </header>

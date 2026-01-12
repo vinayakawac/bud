@@ -17,22 +17,42 @@ model Admin {
   @@map("admins")
 }
 
+model Creator {
+  id               String    @id @default(uuid())
+  name             String
+  email            String    @unique
+  passwordHash     String    @map("password_hash")
+  isActive         Boolean   @default(true) @map("is_active")
+  termsAcceptedAt  DateTime? @map("terms_accepted_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  
+  projects         Project[]
+
+  @@index([email])
+  @@index([isActive])
+  @@map("creators")
+}
+
 model Project {
-  id            String   @id @default(uuid())
+  id            String    @id @default(uuid())
+  creatorId     String?   @map("creator_id")
   title         String
   description   String
-  techStack     String   @map("tech_stack")
+  techStack     String    @map("tech_stack")
   category      String
-  previewImages String   @map("preview_images")
-  externalLink  String   @map("external_link")
-  isPublic      Boolean  @default(true) @map("is_public")
-  metadata      String   @default("{}")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  previewImages String    @map("preview_images")
+  externalLink  String    @map("external_link")
+  isPublic      Boolean   @default(true) @map("is_public")
+  metadata      String    @default("{}")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  creator       Creator?  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
   @@index([isPublic])
   @@index([category])
   @@index([createdAt])
+  @@index([creatorId])
   @@map("projects")
 }
 

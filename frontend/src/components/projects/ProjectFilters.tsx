@@ -34,14 +34,14 @@ export function ProjectFilters({ filters, onFilterChange }: ProjectFiltersProps)
   const years = Array.from({ length: 3 }, (_, i) => currentYear - i);
 
   return (
-    <div className="mb-8 p-6 bg-dark-surface dark:bg-dark-surface light:bg-light-surface border border-dark-border dark:border-dark-border light:border-light-border rounded-lg">
-      <h2 className="text-lg font-bold mb-4 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+    <div className="mb-8 p-6 bg-card border border-border rounded-lg">
+      <h2 className="text-lg font-bold mb-4 text-textPrimary">
         Filters
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
-          <label className="block text-sm font-medium mb-2 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+          <label className="block text-sm font-medium mb-2 text-textPrimary">
             Category
           </label>
           <select
@@ -49,7 +49,7 @@ export function ProjectFilters({ filters, onFilterChange }: ProjectFiltersProps)
             onChange={(e) =>
               onFilterChange({ ...filters, category: e.target.value })
             }
-            className="w-full h-[42px] px-4 bg-dark-bg dark:bg-dark-bg light:bg-light-bg border border-dark-border dark:border-dark-border light:border-light-border rounded-lg text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary focus:outline-none focus:border-dark-accent dark:focus:border-dark-accent light:focus:border-light-accent transition-colors"
+            className="w-full h-[42px] px-4 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:border-accent transition-colors"
           >
             <option value="">All Categories</option>
             {categories.map((cat) => (
@@ -61,13 +61,13 @@ export function ProjectFilters({ filters, onFilterChange }: ProjectFiltersProps)
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+          <label className="block text-sm font-medium mb-2 text-textPrimary">
             Technology
           </label>
           <select
             value={filters.tech}
             onChange={(e) => onFilterChange({ ...filters, tech: e.target.value })}
-            className="w-full h-[42px] px-4 bg-dark-bg dark:bg-dark-bg light:bg-light-bg border border-dark-border dark:border-dark-border light:border-light-border rounded-lg text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary focus:outline-none focus:border-dark-accent dark:focus:border-dark-accent light:focus:border-light-accent transition-colors"
+            className="w-full h-[42px] px-4 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:border-accent transition-colors"
           >
             <option value="">All Technologies</option>
             {techs.map((tech) => (
@@ -79,13 +79,13 @@ export function ProjectFilters({ filters, onFilterChange }: ProjectFiltersProps)
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+          <label className="block text-sm font-medium mb-2 text-textPrimary">
             Year
           </label>
           <select
             value={filters.year}
             onChange={(e) => onFilterChange({ ...filters, year: e.target.value })}
-            className="w-full h-[42px] px-4 bg-dark-bg dark:bg-dark-bg light:bg-light-bg border border-dark-border dark:border-dark-border light:border-light-border rounded-lg text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary focus:outline-none focus:border-dark-accent dark:focus:border-dark-accent light:focus:border-light-accent transition-colors"
+            className="w-full h-[42px] px-4 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:border-accent transition-colors"
           >
             <option value="">All Years</option>
             {years.map((year) => (
@@ -100,7 +100,7 @@ export function ProjectFilters({ filters, onFilterChange }: ProjectFiltersProps)
       {(filters.category || filters.tech || filters.year) && (
         <button
           onClick={() => onFilterChange({ category: '', tech: '', year: '' })}
-          className="mt-4 text-sm text-dark-accent dark:text-dark-accent light:text-light-accent hover:underline"
+          className="mt-4 text-sm text-accent hover:underline"
         >
           Clear all filters
         </button>

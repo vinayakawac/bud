@@ -62,22 +62,22 @@ export default function AdminContactPage() {
     <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-dark-text-primary">Contact Information</h1>
+          <h1 className="text-4xl font-bold text-textPrimary">Contact Information</h1>
         </div>
 
         <AdminNav />
 
         <div className="mt-8 max-w-3xl">
           {isLoading ? (
-            <div className="text-dark-text-secondary">Loading contact information...</div>
+            <div className="text-textSecondary">Loading contact information...</div>
           ) : (
-            <div className="bg-dark-surface border border-dark-border rounded-lg p-6">
-              <h2 className="text-2xl font-bold mb-6 text-dark-text-primary">
+            <div className="bg-card border border-border rounded-lg p-6">
+              <h2 className="text-2xl font-bold mb-6 text-textPrimary">
                 Update Contact Details
               </h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-dark-text-primary">
+                  <label className="block text-sm font-medium mb-2 text-textPrimary">
                     Email Address *
                   </label>
                   <input
@@ -85,65 +85,65 @@ export default function AdminContactPage() {
                     name="email"
                     defaultValue={contact?.email}
                     required
-                    className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-dark-accent"
+                    className="w-full px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
                     placeholder="contact@example.com"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-dark-text-primary">
+                  <label className="block text-sm font-medium mb-2 text-textPrimary">
                     Phone Number
                   </label>
                   <input
                     type="tel"
                     name="phone"
                     defaultValue={contact?.phone || ''}
-                    className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-dark-accent"
+                    className="w-full px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
                     placeholder="+1234567890"
                   />
                 </div>
 
-                <div className="border-t border-dark-border pt-6">
-                  <h3 className="text-lg font-semibold mb-4 text-dark-text-primary">
+                <div className="border-t border-border pt-6">
+                  <h3 className="text-lg font-semibold mb-4 text-textPrimary">
                     Social Media Links
                   </h3>
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-dark-text-primary">
+                      <label className="block text-sm font-medium mb-2 text-textPrimary">
                         GitHub Profile
                       </label>
                       <input
                         type="url"
                         name="github"
                         defaultValue={contact?.socialLinks?.github || ''}
-                        className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-dark-accent"
+                        className="w-full px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
                         placeholder="https://github.com/username"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-dark-text-primary">
+                      <label className="block text-sm font-medium mb-2 text-textPrimary">
                         LinkedIn Profile
                       </label>
                       <input
                         type="url"
                         name="linkedin"
                         defaultValue={contact?.socialLinks?.linkedin || ''}
-                        className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-dark-accent"
+                        className="w-full px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
                         placeholder="https://linkedin.com/in/username"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-dark-text-primary">
+                      <label className="block text-sm font-medium mb-2 text-textPrimary">
                         Twitter Profile
                       </label>
                       <input
                         type="url"
                         name="twitter"
                         defaultValue={contact?.socialLinks?.twitter || ''}
-                        className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-dark-accent"
+                        className="w-full px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
                         placeholder="https://twitter.com/username"
                       />
                     </div>
@@ -154,7 +154,7 @@ export default function AdminContactPage() {
                   <button
                     type="submit"
                     disabled={updateMutation.isPending}
-                    className="px-6 py-3 bg-dark-accent hover:bg-dark-accent/80 text-white rounded-lg transition-colors disabled:opacity-50 font-medium"
+                    className="px-6 py-3 bg-accent hover:opacity-90 text-white rounded-lg transition-opacity disabled:opacity-50 font-medium"
                   >
                     {updateMutation.isPending ? 'Updating...' : 'Update Contact Information'}
                   </button>
@@ -162,11 +162,11 @@ export default function AdminContactPage() {
               </form>
 
               {contact && (
-                <div className="mt-8 pt-6 border-t border-dark-border">
-                  <h3 className="text-lg font-semibold mb-4 text-dark-text-primary">
+                <div className="mt-8 pt-6 border-t border-border">
+                  <h3 className="text-lg font-semibold mb-4 text-textPrimary">
                     Current Contact Information
                   </h3>
-                  <div className="space-y-2 text-sm text-dark-text-secondary">
+                  <div className="space-y-2 text-sm text-textSecondary">
                     <p>
                       <span className="font-medium">Email:</span> {contact.email}
                     </p>

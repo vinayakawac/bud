@@ -39,31 +39,31 @@ export default function ContactPage() {
     <div className="min-h-screen py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-textPrimary">
             Get in Touch
           </h1>
           {/* eslint-disable-next-line react/no-unescaped-entities */}
-          <p className="text-lg text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary">
+          <p className="text-lg text-textSecondary">
             Have questions or want to collaborate? We&apos;d love to hear from you
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div className="space-y-8">
-            <div className="bg-dark-surface dark:bg-dark-surface light:bg-light-surface border border-dark-border dark:border-dark-border light:border-light-border rounded-lg p-8">
-              <h2 className="text-2xl font-bold mb-6 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+            <div className="bg-card border border-border rounded-lg p-8">
+              <h2 className="text-2xl font-bold mb-6 text-textPrimary">
                 Contact Information
               </h2>
 
               <div className="space-y-6">
                 {contact?.email && (
                   <div>
-                    <h3 className="font-medium mb-2 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+                    <h3 className="font-medium mb-2 text-textPrimary">
                       Email
                     </h3>
                     <a
                       href={`mailto:${contact.email}`}
-                      className="text-dark-accent dark:text-dark-accent light:text-light-accent hover:underline"
+                      className="text-accent hover:underline"
                     >
                       {contact.email}
                     </a>
@@ -72,12 +72,12 @@ export default function ContactPage() {
 
                 {contact?.phone && (
                   <div>
-                    <h3 className="font-medium mb-2 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+                    <h3 className="font-medium mb-2 text-textPrimary">
                       Phone
                     </h3>
                     <a
                       href={`tel:${contact.phone}`}
-                      className="text-dark-accent dark:text-dark-accent light:text-light-accent hover:underline"
+                      className="text-accent hover:underline"
                     >
                       {contact.phone}
                     </a>
@@ -87,7 +87,7 @@ export default function ContactPage() {
                 {contact?.socialLinks &&
                   Object.keys(contact.socialLinks).length > 0 && (
                     <div>
-                      <h3 className="font-medium mb-3 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+                      <h3 className="font-medium mb-3 text-textPrimary">
                         Connect With Us
                       </h3>
                       <div className="flex flex-wrap gap-3">
@@ -98,7 +98,7 @@ export default function ContactPage() {
                               href={url as string}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="px-4 py-2 bg-dark-bg dark:bg-dark-bg light:bg-light-bg border border-dark-border dark:border-dark-border light:border-light-border text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary rounded-lg hover:border-dark-accent dark:hover:border-dark-accent light:hover:border-light-accent transition-colors capitalize"
+                              className="px-4 py-2 bg-bgSecondary border border-border text-textPrimary rounded-lg hover:border-borderHover transition-colors capitalize"
                             >
                               {platform}
                             </a>
@@ -111,8 +111,8 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <div className="bg-dark-surface dark:bg-dark-surface light:bg-light-surface border border-dark-border dark:border-dark-border light:border-light-border rounded-lg p-8">
-            <h2 className="text-2xl font-bold mb-6 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+          <div className="bg-card border border-border rounded-lg p-8">
+            <h2 className="text-2xl font-bold mb-6 text-textPrimary">
               Send a Message
             </h2>
 
@@ -120,7 +120,7 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="name"
-                  className="block font-medium mb-2 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary"
+                  className="block font-medium mb-2 text-textPrimary"
                 >
                   Name
                 </label>
@@ -133,7 +133,7 @@ export default function ContactPage() {
                   }
                   required
                   maxLength={100}
-                  className="w-full px-4 py-3 bg-dark-bg dark:bg-dark-bg light:bg-light-bg border border-dark-border dark:border-dark-border light:border-light-border rounded-lg text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary focus:outline-none focus:border-dark-accent dark:focus:border-dark-accent light:focus:border-light-accent transition-colors"
+                  className="w-full px-4 py-3 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:border-accent transition-colors"
                   placeholder="Your name"
                 />
               </div>
@@ -141,7 +141,7 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block font-medium mb-2 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary"
+                  className="block font-medium mb-2 text-textPrimary"
                 >
                   Email
                 </label>
@@ -153,7 +153,7 @@ export default function ContactPage() {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-3 bg-dark-bg dark:bg-dark-bg light:bg-light-bg border border-dark-border dark:border-dark-border light:border-light-border rounded-lg text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary focus:outline-none focus:border-dark-accent dark:focus:border-dark-accent light:focus:border-light-accent transition-colors"
+                  className="w-full px-4 py-3 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:border-accent transition-colors"
                   placeholder="your.email@example.com"
                 />
               </div>
@@ -161,7 +161,7 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="message"
-                  className="block font-medium mb-2 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary"
+                  className="block font-medium mb-2 text-textPrimary"
                 >
                   Message
                 </label>
@@ -175,10 +175,10 @@ export default function ContactPage() {
                   minLength={10}
                   maxLength={2000}
                   rows={6}
-                  className="w-full px-4 py-3 bg-dark-bg dark:bg-dark-bg light:bg-light-bg border border-dark-border dark:border-dark-border light:border-light-border rounded-lg text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary focus:outline-none focus:border-dark-accent dark:focus:border-dark-accent light:focus:border-light-accent transition-colors resize-none"
+                  className="w-full px-4 py-3 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:border-accent transition-colors resize-none"
                   placeholder="Your message..."
                 />
-                <p className="text-sm text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary mt-2">
+                <p className="text-sm text-textSecondary mt-2">
                   {formData.message.length}/2000 characters
                 </p>
               </div>
@@ -186,7 +186,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={mutation.isPending}
-                className="w-full px-8 py-4 bg-dark-accent dark:bg-dark-accent light:bg-light-accent text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-8 py-4 bg-accent text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {mutation.isPending ? 'Sending...' : 'Send Message'}
               </button>

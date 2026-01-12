@@ -299,30 +299,30 @@ export default function AdminProjectsPage() {
     <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-dark-text-primary">Manage Projects</h1>
+          <h1 className="text-4xl font-bold text-textPrimary">Manage Projects</h1>
         </div>
 
         <AdminNav />
 
         <div className="mt-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-dark-text-primary">All Projects</h2>
+            <h2 className="text-2xl font-bold text-textPrimary">All Projects</h2>
             <button
               onClick={() => setShowForm(!showForm)}
-              className="px-4 py-2 bg-dark-accent hover:bg-dark-accent/80 text-white rounded-lg transition-colors"
+              className="px-4 py-2 bg-accent hover:opacity-90 text-white rounded-lg transition-opacity"
             >
               {showForm ? 'Cancel' : '+ Add New Project'}
             </button>
           </div>
 
           {showForm && (
-            <div className="bg-dark-surface border border-dark-border rounded-lg p-6 mb-8">
-              <h3 className="text-xl font-bold mb-4 text-dark-text-primary">
+            <div className="bg-card border border-border rounded-lg p-6 mb-8">
+              <h3 className="text-xl font-bold mb-4 text-textPrimary">
                 {editingProject ? 'Edit Project' : 'Create New Project'}
               </h3>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-dark-text-primary">
+                  <label className="block text-sm font-medium mb-2 text-textPrimary">
                     Title *
                   </label>
                   <input
@@ -330,12 +330,12 @@ export default function AdminProjectsPage() {
                     name="title"
                     defaultValue={editingProject?.title}
                     required
-                    className="w-full h-[42px] px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-dark-accent"
+                    className="w-full h-[42px] px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-dark-text-primary">
+                  <label className="block text-sm font-medium mb-2 text-textPrimary">
                     Description (Markdown) *
                   </label>
                   <textarea
@@ -343,20 +343,20 @@ export default function AdminProjectsPage() {
                     defaultValue={editingProject?.description}
                     required
                     rows={6}
-                    className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-dark-accent"
+                    className="w-full px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-dark-text-primary">
+                    <label className="block text-sm font-medium mb-2 text-textPrimary">
                       Category *
                     </label>
                     <select
                       name="category"
                       defaultValue={editingProject?.category}
                       required
-                      className="w-full h-[42px] px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-dark-accent appearance-none"
+                      className="w-full h-[42px] px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent appearance-none"
                       style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em' }}
                     >
                       <option value="Web Application">Web Application</option>
@@ -369,7 +369,7 @@ export default function AdminProjectsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-dark-text-primary">
+                    <label className="block text-sm font-medium mb-2 text-textPrimary">
                       External Link (GitHub URL)
                     </label>
                     <div className="flex gap-2">
@@ -379,12 +379,12 @@ export default function AdminProjectsPage() {
                         id="externalLink"
                         defaultValue={editingProject?.externalLink}
                         placeholder="https://github.com/username/repo"
-                        className="flex-1 h-[42px] px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-dark-accent"
+                        className="flex-1 h-[42px] px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
                       />
                       <button
                         type="button"
                         onClick={handlePullGitHubDetails}
-                        className="px-4 h-[42px] bg-dark-accent/20 hover:bg-dark-accent/30 text-dark-accent rounded-lg transition-colors whitespace-nowrap"
+                        className="px-4 h-[42px] bg-accent/20 hover:bg-accent/30 text-accent rounded-lg transition-colors whitespace-nowrap"
                       >
                         Pull Details
                       </button>
@@ -393,7 +393,7 @@ export default function AdminProjectsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-dark-text-primary">
+                  <label className="block text-sm font-medium mb-2 text-textPrimary">
                     Tech Stack (comma-separated) *
                   </label>
                   <input
@@ -402,12 +402,12 @@ export default function AdminProjectsPage() {
                     defaultValue={editingProject?.techStack.join(', ')}
                     required
                     placeholder="React, Node.js, PostgreSQL"
-                    className="w-full h-[42px] px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-dark-accent"
+                    className="w-full h-[42px] px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-dark-text-primary">
+                  <label className="block text-sm font-medium mb-2 text-textPrimary">
                     Preview Images (comma-separated URLs)
                   </label>
                   <input
@@ -415,13 +415,13 @@ export default function AdminProjectsPage() {
                     name="previewImages"
                     defaultValue={editingProject?.previewImages.join(', ')}
                     placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
-                    className="w-full h-[42px] px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-dark-accent"
+                    className="w-full h-[42px] px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-dark-text-primary">
+                    <label className="block text-sm font-medium mb-2 text-textPrimary">
                       Version
                     </label>
                     <input
@@ -429,12 +429,12 @@ export default function AdminProjectsPage() {
                       name="version"
                       defaultValue={editingProject?.metadata?.version}
                       placeholder="1.0.0"
-                      className="w-full h-[42px] px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-dark-accent"
+                      className="w-full h-[42px] px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-dark-text-primary">
+                    <label className="block text-sm font-medium mb-2 text-textPrimary">
                       Year
                     </label>
                     <input
@@ -442,7 +442,7 @@ export default function AdminProjectsPage() {
                       name="year"
                       defaultValue={editingProject?.metadata?.year || new Date().getFullYear()}
                       placeholder="2024"
-                      className="w-full h-[42px] px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text-primary focus:outline-none focus:ring-2 focus:ring-dark-accent"
+                      className="w-full h-[42px] px-4 py-2 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
                     />
                   </div>
                 </div>
@@ -453,9 +453,9 @@ export default function AdminProjectsPage() {
                     name="isPublic"
                     id="isPublic"
                     defaultChecked={editingProject?.isPublic ?? true}
-                    className="w-4 h-4 text-dark-accent bg-dark-bg border-dark-border rounded focus:ring-dark-accent"
+                    className="w-4 h-4 text-accent bg-inputBg border-inputBorder rounded focus:ring-accent"
                   />
-                  <label htmlFor="isPublic" className="ml-2 text-sm text-dark-text-primary">
+                  <label htmlFor="isPublic" className="ml-2 text-sm text-textPrimary">
                     Make project public
                   </label>
                 </div>
@@ -464,7 +464,7 @@ export default function AdminProjectsPage() {
                   <button
                     type="submit"
                     disabled={createMutation.isPending || updateMutation.isPending}
-                    className="px-6 py-2 bg-dark-accent hover:bg-dark-accent/80 text-white rounded-lg transition-colors disabled:opacity-50"
+                    className="px-6 py-2 bg-accent hover:opacity-90 text-white rounded-lg transition-opacity disabled:opacity-50"
                   >
                     {editingProject ? 'Update Project' : 'Create Project'}
                   </button>
@@ -472,7 +472,7 @@ export default function AdminProjectsPage() {
                     <button
                       type="button"
                       onClick={handleCancel}
-                      className="px-6 py-2 bg-dark-surface border border-dark-border hover:bg-dark-bg text-dark-text-primary rounded-lg transition-colors"
+                      className="px-6 py-2 bg-card border border-border hover:bg-bgSecondary text-textPrimary rounded-lg transition-colors"
                     >
                       Cancel
                     </button>
@@ -483,30 +483,30 @@ export default function AdminProjectsPage() {
           )}
 
           {isLoading ? (
-            <div className="text-dark-text-secondary">Loading projects...</div>
+            <div className="text-textSecondary">Loading projects...</div>
           ) : (
             <div className="grid gap-4">
               {projectsData?.data.map((project: Project) => (
                 <div
                   key={project.id}
-                  className="bg-dark-surface border border-dark-border rounded-lg p-6"
+                  className="bg-card border border-border rounded-lg p-6"
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-dark-text-primary mb-2">
+                      <h3 className="text-xl font-bold text-textPrimary mb-2">
                         {project.title}
                       </h3>
-                      <p className="text-dark-text-secondary mb-3 line-clamp-2">
+                      <p className="text-textSecondary mb-3 line-clamp-2">
                         {project.description.substring(0, 150)}...
                       </p>
                       <div className="flex flex-wrap gap-2 mb-3">
-                        <span className="text-xs px-2 py-1 bg-dark-accent/20 text-dark-accent rounded">
+                        <span className="text-xs px-2 py-1 bg-accent/20 text-accent rounded">
                           {project.category}
                         </span>
                         {project.techStack.slice(0, 3).map((tech) => (
                           <span
                             key={tech}
-                            className="text-xs px-2 py-1 bg-dark-accent/10 text-dark-text-secondary rounded"
+                            className="text-xs px-2 py-1 bg-accent/10 text-textSecondary rounded"
                           >
                             {tech}
                           </span>
@@ -521,7 +521,7 @@ export default function AdminProjectsPage() {
                     <div className="flex gap-2 ml-4">
                       <button
                         onClick={() => handleEdit(project)}
-                        className="px-4 py-2 bg-dark-accent/20 hover:bg-dark-accent/30 text-dark-accent rounded-lg transition-colors"
+                        className="px-4 py-2 bg-accent/20 hover:bg-accent/30 text-accent rounded-lg transition-colors"
                       >
                         Edit
                       </button>

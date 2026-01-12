@@ -5,25 +5,25 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative bg-dark-bg dark:bg-dark-bg light:bg-light-bg border-b border-dark-border dark:border-dark-border light:border-light-border">
+      <section className="relative bg-bg border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-textPrimary">
               Explore Cutting-Edge Projects
             </h1>
-            <p className="text-xl md:text-2xl text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary mb-8">
+            <p className="text-xl md:text-2xl text-textSecondary mb-8">
               A collection of innovative projects and solutions. Get in touch to have your own custom project built for you.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/projects"
-                className="px-8 py-3 bg-dark-accent dark:bg-dark-accent light:bg-light-accent text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
+                className="px-8 py-3 bg-accent text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
               >
                 Browse Projects
               </Link>
               <Link
                 href="/contact"
-                className="px-8 py-3 border border-dark-border dark:border-dark-border light:border-light-border text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary rounded-lg font-medium hover:bg-dark-surface dark:hover:bg-dark-surface light:hover:bg-light-surface transition-colors"
+                className="px-8 py-3 border border-border text-textPrimary rounded-lg font-medium hover:bg-cardHover transition-colors"
               >
                 Get in Touch
               </Link>
@@ -36,10 +36,10 @@ export default function HomePage() {
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-textPrimary">
               Featured Projects
             </h2>
-            <p className="text-lg text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary">
+            <p className="text-lg text-textSecondary">
               Discover our latest and most innovative projects
             </p>
           </div>
@@ -48,13 +48,13 @@ export default function HomePage() {
       </section>
 
       {/* About Section */}
-      <section className="py-16 md:py-24 bg-dark-surface dark:bg-dark-surface light:bg-light-surface">
+      <section className="py-16 md:py-24 bg-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-textPrimary">
               About This Platform
             </h2>
-            <div className="space-y-4 text-lg text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary">
+            <div className="space-y-4 text-lg text-textSecondary">
               <p>
                 This platform serves as a comprehensive showcase for production-grade projects spanning various technologies and domains. Each project is carefully selected to demonstrate real-world applications, best practices, and innovative solutions.
               </p>

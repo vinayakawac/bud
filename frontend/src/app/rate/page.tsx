@@ -39,18 +39,18 @@ export default function RateUsPage() {
     <div className="min-h-screen py-12">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-textPrimary">
             Rate Your Experience
           </h1>
-          <p className="text-lg text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary">
+          <p className="text-lg text-textSecondary">
             Your feedback helps us improve our platform
           </p>
         </div>
 
-        <div className="bg-dark-surface dark:bg-dark-surface light:bg-light-surface border border-dark-border dark:border-dark-border light:border-light-border rounded-lg p-8">
+        <div className="bg-card border border-border rounded-lg p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
             <div>
-              <label className="block text-lg font-medium mb-4 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
+              <label className="block text-lg font-medium mb-4 text-textPrimary">
                 How would you rate this platform?
               </label>
               <div className="flex gap-2 justify-center">
@@ -68,7 +68,7 @@ export default function RateUsPage() {
                       className={
                         star <= (hoveredRating || rating)
                           ? 'text-yellow-500'
-                          : 'text-dark-border dark:text-dark-border light:text-light-border'
+                          : 'text-border'
                       }
                     >
                       ★
@@ -77,7 +77,7 @@ export default function RateUsPage() {
                 ))}
               </div>
               {rating > 0 && (
-                <p className="text-center mt-4 text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary">
+                <p className="text-center mt-4 text-textSecondary">
                   You rated: {rating} star{rating > 1 ? 's' : ''}
                 </p>
               )}
@@ -86,7 +86,7 @@ export default function RateUsPage() {
             <div>
               <label
                 htmlFor="feedback"
-                className="block text-lg font-medium mb-2 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary"
+                className="block text-lg font-medium mb-2 text-textPrimary"
               >
                 Additional Feedback (Optional)
               </label>
@@ -96,10 +96,10 @@ export default function RateUsPage() {
                 onChange={(e) => setFeedback(e.target.value)}
                 maxLength={1000}
                 rows={5}
-                className="w-full px-4 py-3 bg-dark-bg dark:bg-dark-bg light:bg-light-bg border border-dark-border dark:border-dark-border light:border-light-border rounded-lg text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary focus:outline-none focus:border-dark-accent dark:focus:border-dark-accent light:focus:border-light-accent transition-colors resize-none"
+                className="w-full px-4 py-3 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:border-accent transition-colors resize-none"
                 placeholder="Tell us more about your experience..."
               />
-              <p className="text-sm text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary mt-2">
+              <p className="text-sm text-textSecondary mt-2">
                 {feedback.length}/1000 characters
               </p>
             </div>
@@ -107,7 +107,7 @@ export default function RateUsPage() {
             <button
               type="submit"
               disabled={mutation.isPending || rating === 0}
-              className="w-full px-8 py-4 bg-dark-accent dark:bg-dark-accent light:bg-light-accent text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-8 py-4 bg-accent text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {mutation.isPending ? 'Submitting...' : 'Submit Rating'}
             </button>

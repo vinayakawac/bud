@@ -33,12 +33,12 @@ export function LoginForm() {
   };
 
   return (
-    <div className="bg-dark-surface dark:bg-dark-surface light:bg-light-surface border border-dark-border dark:border-dark-border light:border-light-border rounded-lg p-8">
+    <div className="bg-card border border-border rounded-lg p-8">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label
             htmlFor="email"
-            className="block font-medium mb-2 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary"
+            className="block font-medium mb-2 text-textPrimary"
           >
             Email
           </label>
@@ -50,7 +50,7 @@ export function LoginForm() {
               setCredentials({ ...credentials, email: e.target.value })
             }
             required
-            className="w-full px-4 py-3 bg-dark-bg dark:bg-dark-bg light:bg-light-bg border border-dark-border dark:border-dark-border light:border-light-border rounded-lg text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary focus:outline-none focus:border-dark-accent dark:focus:border-dark-accent light:focus:border-light-accent transition-colors"
+            className="w-full px-4 py-3 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:border-accent transition-colors"
             placeholder="admin@example.com"
           />
         </div>
@@ -58,7 +58,7 @@ export function LoginForm() {
         <div>
           <label
             htmlFor="password"
-            className="block font-medium mb-2 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary"
+            className="block font-medium mb-2 text-textPrimary"
           >
             Password
           </label>
@@ -70,7 +70,7 @@ export function LoginForm() {
               setCredentials({ ...credentials, password: e.target.value })
             }
             required
-            className="w-full px-4 py-3 bg-dark-bg dark:bg-dark-bg light:bg-light-bg border border-dark-border dark:border-dark-border light:border-light-border rounded-lg text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary focus:outline-none focus:border-dark-accent dark:focus:border-dark-accent light:focus:border-light-accent transition-colors"
+            className="w-full px-4 py-3 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:border-accent transition-colors"
             placeholder="••••••••"
           />
         </div>
@@ -78,7 +78,7 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="w-full px-8 py-4 bg-dark-accent dark:bg-dark-accent light:bg-light-accent text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-8 py-4 bg-accent text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {mutation.isPending ? 'Logging in...' : 'Login'}
         </button>

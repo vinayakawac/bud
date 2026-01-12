@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/lib/server/db';
 import { signToken } from '@/lib/server/auth';
-import { success, error, serverError } from '@/lib/server/response';
+import { success, error } from '@/lib/server/response';
 import bcrypt from 'bcrypt';
 
 export const dynamic = 'force-dynamic';

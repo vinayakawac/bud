@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import PullDetailsSection from '@/components/projects/PullDetailsSection';
 
 interface Project {
   id: string;
@@ -27,6 +28,10 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+
+  const handleDataPulled = (pulledData: Partial<typeof formData>) => {
+    setFormData({ ...formData, ...pulledData });
+  };
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -131,6 +136,11 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
             {error}
           </div>
         )}
+
+        <PullDetailsSection
+          onDataPulled={handleDataPulled}
+          currentFormData={formData}
+        />
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import PullDetailsSection from '@/components/projects/PullDetailsSection';
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -16,6 +17,10 @@ export default function NewProjectPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const handleDataPulled = (pulledData: Partial<typeof formData>) => {
+    setFormData({ ...formData, ...pulledData });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +79,11 @@ export default function NewProjectPage() {
             {error}
           </div>
         )}
+
+        <PullDetailsSection
+          onDataPulled={handleDataPulled}
+          currentFormData={formData}
+        />
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>

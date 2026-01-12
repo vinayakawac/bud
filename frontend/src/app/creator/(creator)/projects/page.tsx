@@ -188,6 +188,12 @@ export default function CreatorProjectsPage() {
                   </p>
                   <div className="flex space-x-2">
                     <Link
+                      href={`/creator/projects/${project.id}`}
+                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-center transition-colors"
+                    >
+                      View
+                    </Link>
+                    <Link
                       href={`/creator/projects/${project.id}/edit`}
                       className="flex-1 bg-accent text-white py-2 rounded text-center hover:opacity-90 transition-opacity"
                     >

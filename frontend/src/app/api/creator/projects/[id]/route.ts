@@ -5,6 +5,46 @@ import { success, error } from '@/lib/server/response';
 
 export const dynamic = 'force-dynamic';
 
+// GET /api/creator/projects/[id] - Get single project with full details
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const creatorPayload = await authenticateCreator(request);
+
+    if (!creatorPayload) {
+      return error('Unauthorized', 401);
+    }
+
+    const project = await db.project.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!project) {
+      return error('Project not found', 404);
+    }
+
+    // Verify ownership
+    if (project.creatorId !== creatorPayload.creatorId) {
+      return error('Forbidden: You do not own this project', 403);
+    }
+
+    // Parse JSON fields
+    const formattedProject = {
+      ...project,
+      techStack: JSON.parse(project.techStack as string),
+      previewImages: JSON.parse(project.previewImages as string),
+      metadata: project.metadata ? JSON.parse(project.metadata as string) : null,
+    };
+
+    return success({ project: formattedProject });
+  } catch (err: any) {
+    console.error('GET /api/creator/projects/[id] error:', err);
+    return error(`Failed to fetch project: ${err.message}`, 500);
+  }
+}
+
 // PUT /api/creator/projects/[id] - Update project
 export async function PUT(
   request: NextRequest,

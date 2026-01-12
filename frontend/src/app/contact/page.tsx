@@ -42,6 +42,7 @@ export default function ContactPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
             Get in Touch
           </h1>
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
           <p className="text-lg text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary">
             Have questions or want to collaborate? We&apos;d love to hear from you
           </p>

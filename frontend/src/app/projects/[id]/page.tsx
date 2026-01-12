@@ -44,6 +44,7 @@ export default function ProjectDetailPage() {
           <h1 className="text-3xl font-bold mb-4 text-dark-text-primary dark:text-dark-text-primary light:text-light-text-primary">
             Project Not Found
           </h1>
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
           <p className="text-dark-text-secondary dark:text-dark-text-secondary light:text-light-text-secondary mb-8">
             The project you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>

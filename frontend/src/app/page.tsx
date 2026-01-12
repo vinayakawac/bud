@@ -58,6 +58,7 @@ export default function HomePage() {
               <p>
                 This platform serves as a comprehensive showcase for production-grade projects spanning various technologies and domains. Each project is carefully selected to demonstrate real-world applications, best practices, and innovative solutions.
               </p>
+              {/* eslint-disable-next-line react/no-unescaped-entities */}
               <p>
                 Whether you&apos;re looking for inspiration, seeking to understand modern development patterns, or interested in exploring diverse tech stacks, you&apos;ll find valuable insights here.
               </p>

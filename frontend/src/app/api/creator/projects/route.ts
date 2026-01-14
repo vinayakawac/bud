@@ -70,9 +70,9 @@ export async function POST(request: NextRequest) {
       data: {
         title,
         description,
-        techStack,
+        techStack: JSON.stringify(techStack), // Ensure array is stored as JSON
         category,
-        previewImages: previewImages || '',
+        previewImages: JSON.stringify(previewImages || []), // Ensure array is stored as JSON
         externalLink: externalLink || '',
         creatorId: creatorPayload.creatorId,
       },

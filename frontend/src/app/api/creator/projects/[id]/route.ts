@@ -45,12 +45,29 @@ export async function GET(
       return error('Forbidden: You do not have access to this project', 403);
     }
 
-    // Parse JSON fields
+    // Parse JSON fields with safe fallbacks
+    let techStack, previewImages, metadata;
+    try {
+      techStack = JSON.parse(project.techStack as string);
+    } catch {
+      techStack = Array.isArray(project.techStack) ? project.techStack : [project.techStack];
+    }
+    try {
+      previewImages = JSON.parse(project.previewImages as string);
+    } catch {
+      previewImages = Array.isArray(project.previewImages) ? project.previewImages : [];
+    }
+    try {
+      metadata = project.metadata ? JSON.parse(project.metadata as string) : null;
+    } catch {
+      metadata = null;
+    }
+
     const formattedProject = {
       ...project,
-      techStack: JSON.parse(project.techStack as string),
-      previewImages: JSON.parse(project.previewImages as string),
-      metadata: project.metadata ? JSON.parse(project.metadata as string) : null,
+      techStack,
+      previewImages,
+      metadata,
     };
 
     return success({ project: formattedProject });
@@ -101,9 +118,9 @@ export async function PUT(
       data: {
         title,
         description,
-        techStack,
+        techStack: JSON.stringify(techStack), // Ensure array is stored as JSON
         category,
-        previewImages,
+        previewImages: JSON.stringify(previewImages || []), // Ensure array is stored as JSON
         externalLink,
       },
     });

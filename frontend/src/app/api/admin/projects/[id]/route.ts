@@ -1,1 +1,1 @@
-export { PUT, DELETE } from './handlers';
+export { GET, PUT, DELETE } from './handlers';

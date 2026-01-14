@@ -1,12 +1,15 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Project } from '@/types';
+import { normalizeTechStack } from '@/lib/utils/normalize';
 
 interface ProjectCardProps {
   project: Project;
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
+  const techStack = normalizeTechStack(project.techStack);
+
   return (
     <Link href={`/projects/${project.id}`}>
       <div className="group bg-card border border-border rounded-lg overflow-hidden hover:border-borderHover transition-all duration-300 h-full flex flex-col">
@@ -37,7 +40,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           </p>
 
           <div className="flex flex-wrap gap-2">
-            {project.techStack.slice(0, 3).map((tech) => (
+            {techStack.slice(0, 3).map((tech) => (
               <span
                 key={tech}
                 className="text-xs px-2 py-1 bg-accent/10 text-accent rounded"
@@ -45,9 +48,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
                 {tech}
               </span>
             ))}
-            {project.techStack.length > 3 && (
+            {techStack.length > 3 && (
               <span className="text-xs px-2 py-1 text-textSecondary">
-                +{project.techStack.length - 3} more
+                +{techStack.length - 3} more
               </span>
             )}
           </div>

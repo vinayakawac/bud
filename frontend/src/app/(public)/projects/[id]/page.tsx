@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import type { Project } from '@/types';
+import { normalizeTechStack } from '@/lib/utils/normalize';
 
 export default function ProjectDetailPage() {
   const params = useParams();
@@ -145,7 +146,7 @@ export default function ProjectDetailPage() {
               Technology Stack
             </h2>
             <div className="flex flex-wrap gap-3">
-              {project.techStack.map((tech) => (
+              {normalizeTechStack(project.techStack).map((tech) => (
                 <span
                   key={tech}
                   className="px-4 py-2 bg-accent/10 border border-accent/30 text-accent rounded-lg font-medium"

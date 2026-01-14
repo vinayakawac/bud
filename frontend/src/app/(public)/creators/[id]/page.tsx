@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
+import { normalizeTechStack } from '@/lib/utils/normalize';
 
 export default function CreatorProfilePage() {
   const params = useParams();
@@ -83,7 +84,9 @@ export default function CreatorProfilePage() {
                 Created Projects ({creator.primaryProjects.length})
               </h2>
               <div className="grid gap-4">
-                {creator.primaryProjects.map((project: any) => (
+                {creator.primaryProjects.map((project: any) => {
+                  const techStack = normalizeTechStack(project.techStack);
+                  return (
                   <Link
                     key={project.id}
                     href={`/projects/${project.id}`}
@@ -96,7 +99,7 @@ export default function CreatorProfilePage() {
                       {project.description}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {project.techStack.slice(0, 3).map((tech: string) => (
+                      {techStack.slice(0, 3).map((tech: string) => (
                         <span
                           key={tech}
                           className="px-2 py-1 bg-accent/10 text-accent text-xs rounded"
@@ -104,14 +107,15 @@ export default function CreatorProfilePage() {
                           {tech}
                         </span>
                       ))}
-                      {project.techStack.length > 3 && (
+                      {techStack.length > 3 && (
                         <span className="px-2 py-1 text-textSecondary text-xs">
-                          +{project.techStack.length - 3} more
+                          +{techStack.length - 3} more
                         </span>
                       )}
                     </div>
                   </Link>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -123,7 +127,9 @@ export default function CreatorProfilePage() {
                 Collaborated On ({creator.collaborationProjects.length})
               </h2>
               <div className="grid gap-4">
-                {creator.collaborationProjects.map((project: any) => (
+                {creator.collaborationProjects.map((project: any) => {
+                  const techStack = normalizeTechStack(project.techStack);
+                  return (
                   <Link
                     key={project.id}
                     href={`/projects/${project.id}`}
@@ -136,7 +142,7 @@ export default function CreatorProfilePage() {
                       {project.description}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {project.techStack.slice(0, 3).map((tech: string) => (
+                      {techStack.slice(0, 3).map((tech: string) => (
                         <span
                           key={tech}
                           className="px-2 py-1 bg-accent/10 text-accent text-xs rounded"
@@ -144,14 +150,15 @@ export default function CreatorProfilePage() {
                           {tech}
                         </span>
                       ))}
-                      {project.techStack.length > 3 && (
+                      {techStack.length > 3 && (
                         <span className="px-2 py-1 text-textSecondary text-xs">
-                          +{project.techStack.length - 3} more
+                          +{techStack.length - 3} more
                         </span>
                       )}
                     </div>
                   </Link>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}

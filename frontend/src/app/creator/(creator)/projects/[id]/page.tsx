@@ -29,9 +29,12 @@ export default function ViewProjectPage({ params }: { params: { id: string } }) 
 
   const fetchProject = async () => {
     try {
+      console.log('CREATOR DETAIL FETCH:', params.id);
       const response = await fetch(`/api/creator/projects/${params.id}`, {
         credentials: 'include',
       });
+
+      console.log('Response status:', response.status, response.statusText);
 
       if (response.status === 401) {
         router.push('/creator/login');
@@ -39,10 +42,13 @@ export default function ViewProjectPage({ params }: { params: { id: string } }) 
       }
 
       if (!response.ok) {
-        throw new Error('Failed to fetch project');
+        const errorData = await response.text();
+        console.error('API error response:', errorData);
+        throw new Error(`Failed to fetch project: ${response.status} - ${errorData}`);
       }
 
       const data = await response.json();
+      console.log('Project data received:', data);
       setProject(data.project);
     } catch (error) {
       console.error('Error fetching project:', error);

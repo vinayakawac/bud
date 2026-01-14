@@ -12,11 +12,15 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    console.log('CREATOR API HIT - Project ID:', params.id);
     const creatorPayload = await authenticateCreator(request);
 
     if (!creatorPayload) {
+      console.log('Authentication failed - no creator payload');
       return error('Unauthorized', 401);
     }
+
+    console.log('Authenticated creator:', creatorPayload.creatorId);
 
     const project = await db.project.findUnique({
       where: { id: params.id },

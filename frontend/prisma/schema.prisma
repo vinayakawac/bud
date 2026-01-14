@@ -26,7 +26,10 @@ model Creator {
   termsAcceptedAt  DateTime? @map("terms_accepted_at")
   createdAt        DateTime  @default(now()) @map("created_at")
   
-  projects         Project[]
+  projects                Project[]
+  collaborations          ProjectCollaborator[]
+  sentInvitations         CollaborationInvite[] @relation("InviteSender")
+  receivedInvitations     CollaborationInvite[] @relation("InviteReceiver")
 
   @@index([email])
   @@index([isActive])
@@ -50,6 +53,7 @@ model Project {
   creator       Creator?  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   comments      Comment[]
   ratings       Rating[]
+  collaborators ProjectCollaborator[]
 
   @@index([isPublic])
   @@index([category])
@@ -114,4 +118,38 @@ model ContactMessage {
 
   @@index([createdAt])
   @@map("contact_messages")
+}
+
+model ProjectCollaborator {
+  id          String   @id @default(uuid())
+  projectId   String   @map("project_id")
+  creatorId   String   @map("creator_id")
+  role        String?  @default("collaborator")
+  addedAt     DateTime @default(now()) @map("added_at")
+  
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  creator     Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, creatorId])
+  @@index([projectId])
+  @@index([creatorId])
+  @@map("project_collaborators")
+}
+
+model CollaborationInvite {
+  id          String   @id @default(uuid())
+  projectId   String   @map("project_id")
+  senderId    String   @map("sender_id")
+  receiverId  String   @map("receiver_id")
+  status      String   @default("pending") // "pending", "accepted", "rejected"
+  createdAt   DateTime @default(now()) @map("created_at")
+  respondedAt DateTime? @map("responded_at")
+  
+  sender      Creator  @relation("InviteSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver    Creator  @relation("InviteReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, receiverId])
+  @@index([receiverId, status])
+  @@index([projectId])
+  @@map("collaboration_invites")
 }

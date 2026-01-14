@@ -14,6 +14,17 @@ export interface Project {
   };
   createdAt: string;
   updatedAt: string;
+  creator?: {
+    id: string;
+    name: string;
+  };
+  collaborators?: Array<{
+    id: string;
+    creator: {
+      id: string;
+      name: string;
+    };
+  }>;
 }
 
 export interface Rating {

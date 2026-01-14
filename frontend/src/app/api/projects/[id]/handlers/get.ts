@@ -10,6 +10,24 @@ export async function GET(
   try {
     const project = await db.project.findUnique({
       where: { id: params.id, isPublic: true },
+      include: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        collaborators: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!project) {

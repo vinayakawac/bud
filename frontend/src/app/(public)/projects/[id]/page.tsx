@@ -74,6 +74,36 @@ export default function ProjectDetailPage() {
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-textPrimary">
               {project.title}
             </h1>
+            
+            {/* Creator Attribution */}
+            {project.creator && (
+              <div className="mb-6 text-textSecondary">
+                <span className="text-sm">Created by </span>
+                <Link 
+                  href={`/creators/${project.creator.id}`}
+                  className="text-accent hover:underline font-medium"
+                >
+                  {project.creator.name}
+                </Link>
+                {project.collaborators && project.collaborators.length > 0 && (
+                  <>
+                    <span className="text-sm"> with </span>
+                    {project.collaborators.map((collab: any, idx: number) => (
+                      <span key={collab.id}>
+                        <Link
+                          href={`/creators/${collab.creator.id}`}
+                          className="text-accent hover:underline font-medium"
+                        >
+                          {collab.creator.name}
+                        </Link>
+                        {idx < (project.collaborators?.length ?? 0) - 1 && ', '}
+                      </span>
+                    ))}
+                  </>
+                )}
+              </div>
+            )}
+
             <div className="flex flex-wrap gap-2 mb-6">
               <span className="px-3 py-1 bg-card border border-border rounded-full text-sm text-textSecondary">
                 {project.category}

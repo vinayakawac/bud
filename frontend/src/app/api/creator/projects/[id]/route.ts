@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { db } from '@/lib/server/db';
 import { authenticateCreator } from '@/lib/server/creatorAuth';
 import { success, error } from '@/lib/server/response';
+import { canEditProject, isPrimaryCreator } from '@/lib/server/collaboration';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,15 +20,29 @@ export async function GET(
 
     const project = await db.project.findUnique({
       where: { id: params.id },
+      include: {
+        collaborators: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!project) {
       return error('Project not found', 404);
     }
 
-    // Verify ownership
-    if (project.creatorId !== creatorPayload.creatorId) {
-      return error('Forbidden: You do not own this project', 403);
+    // Verify access (owner or collaborator)
+    const hasAccess = await canEditProject(params.id, creatorPayload.creatorId);
+    if (!hasAccess) {
+      return error('Forbidden: You do not have access to this project', 403);
     }
 
     // Parse JSON fields
@@ -66,7 +81,7 @@ export async function PUT(
       externalLink,
     } = await request.json();
 
-    // Verify ownership
+    // Verify project exists
     const existingProject = await db.project.findUnique({
       where: { id: params.id },
     });
@@ -75,8 +90,10 @@ export async function PUT(
       return error('Project not found', 404);
     }
 
-    if (existingProject.creatorId !== creatorPayload.creatorId) {
-      return error('Forbidden: You do not own this project', 403);
+    // Check if user has edit access (owner or collaborator)
+    const hasAccess = await canEditProject(params.id, creatorPayload.creatorId);
+    if (!hasAccess) {
+      return error('Forbidden: You do not have permission to edit this project', 403);
     }
 
     const project = await db.project.update({
@@ -110,7 +127,7 @@ export async function DELETE(
       return error('Unauthorized', 401);
     }
 
-    // Verify ownership
+    // Verify project exists
     const existingProject = await db.project.findUnique({
       where: { id: params.id },
     });
@@ -119,8 +136,10 @@ export async function DELETE(
       return error('Project not found', 404);
     }
 
-    if (existingProject.creatorId !== creatorPayload.creatorId) {
-      return error('Forbidden: You do not own this project', 403);
+    // Only primary creator can delete
+    const isOwner = await isPrimaryCreator(params.id, creatorPayload.creatorId);
+    if (!isOwner) {
+      return error('Forbidden: Only the primary creator can delete this project', 403);
     }
 
     await db.project.delete({

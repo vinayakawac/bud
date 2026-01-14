@@ -32,6 +32,24 @@ export async function GET(request: NextRequest) {
     const projects = await db.project.findMany({
       where,
       orderBy: { createdAt: 'desc' },
+      include: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        collaborators: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     const formatted = projects.map((p: any) => ({

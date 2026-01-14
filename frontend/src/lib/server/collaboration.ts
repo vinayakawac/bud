@@ -12,11 +12,7 @@ export async function canEditProject(
 ): Promise<boolean> {
   const project = await db.project.findUnique({
     where: { id: projectId },
-    include: {
-      collaborators: {
-        where: { creatorId },
-      },
-    },
+    select: { creatorId: true },
   });
 
   if (!project) return false;
@@ -24,8 +20,15 @@ export async function canEditProject(
   // Primary creator always has access
   if (project.creatorId === creatorId) return true;
 
-  // Collaborator has access
-  return project.collaborators.length > 0;
+  // Check if user is a collaborator
+  const collaborator = await db.projectCollaborator.findFirst({
+    where: {
+      projectId,
+      creatorId,
+    },
+  });
+
+  return !!collaborator;
 }
 
 /**

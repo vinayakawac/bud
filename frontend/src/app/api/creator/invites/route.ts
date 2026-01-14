@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     // Get project details for each invite
     const invitesWithProjects = await Promise.all(
-      invites.map(async (invite) => {
+      invites.map(async (invite: any) => {
         const project = await db.project.findUnique({
           where: { id: invite.projectId },
           select: {

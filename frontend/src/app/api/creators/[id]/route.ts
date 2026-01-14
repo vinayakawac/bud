@@ -33,6 +33,8 @@ export async function GET(
         // Fetch collaboration projects
         collaborations: {
           select: {
+            id: true,
+            projectId: true,
             project: {
               select: {
                 id: true,

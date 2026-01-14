@@ -7,7 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import type { Project } from '@/types';
-import { normalizeTechStack } from '@/lib/utils/normalize';
+import { normalizeTechStack, normalizePreviewImages } from '@/lib/utils/normalize';
 
 export default function ProjectDetailPage() {
   const params = useParams();
@@ -59,6 +59,8 @@ export default function ProjectDetailPage() {
       </div>
     );
   }
+
+  const previewImages = normalizePreviewImages(project.previewImages);
 
   return (
     <div className="min-h-screen py-12">
@@ -117,9 +119,9 @@ export default function ProjectDetailPage() {
             </div>
           </div>
 
-          {project.previewImages && project.previewImages.length > 0 && (
+          {previewImages.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {project.previewImages.map((image, index) => (
+              {previewImages.map((image, index) => (
                 <div
                   key={index}
                   className="relative aspect-video rounded-lg overflow-hidden border border-border"

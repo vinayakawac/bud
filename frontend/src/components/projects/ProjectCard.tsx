@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Project } from '@/types';
-import { normalizeTechStack } from '@/lib/utils/normalize';
+import { normalizeTechStack, normalizePreviewImages } from '@/lib/utils/normalize';
 
 interface ProjectCardProps {
   project: Project;
@@ -9,14 +9,15 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const techStack = normalizeTechStack(project.techStack);
+  const previewImages = normalizePreviewImages(project.previewImages);
 
   return (
     <Link href={`/projects/${project.id}`}>
       <div className="group bg-card border border-border rounded-lg overflow-hidden hover:border-borderHover transition-all duration-300 h-full flex flex-col">
-        {project.previewImages?.[0] && (
+        {previewImages[0] && (
           <div className="relative aspect-video overflow-hidden">
             <Image
-              src={project.previewImages[0]}
+              src={previewImages[0]}
               alt={project.title}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"

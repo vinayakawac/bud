@@ -34,11 +34,28 @@ export async function GET(
       return notFound('Project not found');
     }
 
+    let techStack, previewImages, metadata;
+    try {
+      techStack = JSON.parse(project.techStack as string);
+    } catch {
+      techStack = Array.isArray(project.techStack) ? project.techStack : [project.techStack];
+    }
+    try {
+      previewImages = JSON.parse(project.previewImages as string);
+    } catch {
+      previewImages = Array.isArray(project.previewImages) ? project.previewImages : [];
+    }
+    try {
+      metadata = project.metadata ? JSON.parse(project.metadata as string) : null;
+    } catch {
+      metadata = null;
+    }
+
     const formatted = {
       ...project,
-      techStack: JSON.parse(project.techStack as string),
-      previewImages: JSON.parse(project.previewImages as string),
-      metadata: project.metadata ? JSON.parse(project.metadata as string) : null,
+      techStack,
+      previewImages,
+      metadata,
     };
 
     return success(formatted);

@@ -52,12 +52,30 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const formatted = projects.map((p: any) => ({
-      ...p,
-      techStack: JSON.parse(p.techStack),
-      previewImages: JSON.parse(p.previewImages),
-      metadata: p.metadata ? JSON.parse(p.metadata) : null,
-    }));
+    const formatted = projects.map((p: any) => {
+      let techStack, previewImages, metadata;
+      try {
+        techStack = JSON.parse(p.techStack);
+      } catch {
+        techStack = Array.isArray(p.techStack) ? p.techStack : [p.techStack];
+      }
+      try {
+        previewImages = JSON.parse(p.previewImages);
+      } catch {
+        previewImages = Array.isArray(p.previewImages) ? p.previewImages : [];
+      }
+      try {
+        metadata = p.metadata ? JSON.parse(p.metadata) : null;
+      } catch {
+        metadata = null;
+      }
+      return {
+        ...p,
+        techStack,
+        previewImages,
+        metadata,
+      };
+    });
 
     return success(formatted);
   } catch (err) {

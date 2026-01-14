@@ -59,17 +59,33 @@ export async function GET(
     const formatted = {
       id: creator.id,
       name: creator.name,
-      primaryProjects: creator.projects.map((p: any) => ({
-        ...p,
-        techStack: JSON.parse(p.techStack as string),
-      })),
+      primaryProjects: creator.projects.map((p: any) => {
+        let techStack;
+        try {
+          techStack = JSON.parse(p.techStack as string);
+        } catch {
+          techStack = Array.isArray(p.techStack) ? p.techStack : [p.techStack];
+        }
+        return {
+          ...p,
+          techStack,
+        };
+      }),
       collaborationProjects: creator.collaborations
         .map((c: any) => c.project)
         .filter((p: any) => p && p.isPublic)
-        .map((p: any) => ({
-          ...p,
-          techStack: JSON.parse(p.techStack as string),
-        })),
+        .map((p: any) => {
+          let techStack;
+          try {
+            techStack = JSON.parse(p.techStack as string);
+          } catch {
+            techStack = Array.isArray(p.techStack) ? p.techStack : [p.techStack];
+          }
+          return {
+            ...p,
+            techStack,
+          };
+        }),
     };
 
     return success(formatted);

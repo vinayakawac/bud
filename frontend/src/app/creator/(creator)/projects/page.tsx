@@ -12,6 +12,7 @@ interface Project {
   category: string;
   previewImages: string;
   externalLink: string;
+  isPublic: boolean;
   createdAt: string;
 }
 
@@ -176,6 +177,15 @@ export default function CreatorProjectsPage() {
                     <span className="text-xs bg-accent bg-opacity-20 text-accent px-2 py-1 rounded">
                       {project.category}
                     </span>
+                    {project.isPublic ? (
+                      <span className="text-xs bg-green-500 bg-opacity-20 text-green-600 px-2 py-1 rounded">
+                        Published
+                      </span>
+                    ) : (
+                      <span className="text-xs bg-gray-500 bg-opacity-20 text-gray-600 px-2 py-1 rounded">
+                        Draft
+                      </span>
+                    )}
                   </div>
                   <h3 className="text-xl font-semibold text-textPrimary mb-2">
                     {project.title}
@@ -187,12 +197,25 @@ export default function CreatorProjectsPage() {
                     Tech: {project.techStack}
                   </p>
                   <div className="flex space-x-2">
-                    <Link
-                      href={`/creator/projects/${project.id}`}
-                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-center transition-colors"
-                    >
-                      View
-                    </Link>
+                    {project.isPublic ? (
+                      <Link
+                        href={`/projects/${project.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-center transition-colors"
+                        title="Preview as public users see it"
+                      >
+                        Preview
+                      </Link>
+                    ) : (
+                      <button
+                        disabled
+                        className="flex-1 bg-gray-400 text-gray-200 py-2 rounded text-center cursor-not-allowed"
+                        title="Publish to preview"
+                      >
+                        Preview
+                      </button>
+                    )}
                     <Link
                       href={`/creator/projects/${project.id}/edit`}
                       className="flex-1 bg-accent text-white py-2 rounded text-center hover:opacity-90 transition-opacity"

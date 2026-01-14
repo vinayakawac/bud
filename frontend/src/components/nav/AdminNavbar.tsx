@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { ThemeToggle } from '../theme/ThemeToggle';
 
@@ -32,9 +33,16 @@ export function AdminNavbar() {
           <div className="flex items-center gap-8">
             <Link
               href="/admin/dashboard"
-              className="text-2xl font-bold text-textPrimary hover:text-accent transition-colors"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
-              O-Hub Admin
+              <Image
+                src="/favicon.ico"
+                alt="O-Hub Logo"
+                width={32}
+                height={32}
+                className="w-8 h-8"
+              />
+              <span className="text-2xl font-bold text-textPrimary">O-Hub Admin</span>
             </Link>
 
             <div className="hidden md:flex items-center gap-6">

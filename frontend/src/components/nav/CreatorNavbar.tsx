@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { ThemeToggle } from '../theme/ThemeToggle';
 
@@ -31,9 +32,16 @@ export function CreatorNavbar() {
         <div className="flex items-center justify-between h-16">
           <Link
             href="/creator/dashboard"
-            className="text-2xl font-bold text-textPrimary hover:text-accent transition-colors"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
-            O-Hub
+            <Image
+              src="/favicon.ico"
+              alt="O-Hub Logo"
+              width={32}
+              height={32}
+              className="w-8 h-8"
+            />
+            <span className="text-2xl font-bold text-textPrimary">O-Hub</span>
           </Link>
 
           <div className="flex items-center gap-6">

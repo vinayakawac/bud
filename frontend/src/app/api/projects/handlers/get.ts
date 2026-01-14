@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { db } from '@/lib/server/db';
+import { projectService } from '@/domain/project/service';
 import { success, serverError } from '@/lib/server/response';
 
 export const dynamic = 'force-dynamic';
@@ -7,77 +7,20 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
+    
     const category = searchParams.get('category');
     const tech = searchParams.get('tech');
-    const year = searchParams.get('year');
+    const yearParam = searchParams.get('year');
+    
+    const filters = {
+      category: category || undefined,
+      tech: tech || undefined,
+      year: yearParam ? parseInt(yearParam) : undefined,
+    };
 
-    const where: any = { isPublic: true };
+    const projects = await projectService.getPublicProjects(filters);
 
-    if (category && category !== 'all') {
-      where.category = category;
-    }
-
-    if (tech && tech !== 'all') {
-      where.techStack = { contains: tech };
-    }
-
-    if (year && year !== 'all') {
-      const yearNum = parseInt(year);
-      where.createdAt = {
-        gte: new Date(`${yearNum}-01-01`),
-        lt: new Date(`${yearNum + 1}-01-01`),
-      };
-    }
-
-    const projects = await db.project.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        creator: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        collaborators: {
-          include: {
-            creator: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    const formatted = projects.map((p: any) => {
-      let techStack, previewImages, metadata;
-      try {
-        techStack = JSON.parse(p.techStack);
-      } catch {
-        techStack = Array.isArray(p.techStack) ? p.techStack : [p.techStack];
-      }
-      try {
-        previewImages = JSON.parse(p.previewImages);
-      } catch {
-        previewImages = Array.isArray(p.previewImages) ? p.previewImages : [];
-      }
-      try {
-        metadata = p.metadata ? JSON.parse(p.metadata) : null;
-      } catch {
-        metadata = null;
-      }
-      return {
-        ...p,
-        techStack,
-        previewImages,
-        metadata,
-      };
-    });
-
-    return success(formatted);
+    return success(projects);
   } catch (err) {
     console.error('GET /api/projects error:', err);
     return serverError();

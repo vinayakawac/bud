@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { db } from '@/lib/server/db';
+import { projectService } from '@/domain/project/service';
 import { authenticateAdmin } from '@/lib/server/auth';
 import { success, unauthorized, serverError } from '@/lib/server/response';
 
@@ -13,49 +13,13 @@ export async function GET(
     const auth = authenticateAdmin(request);
     if (!auth) return unauthorized();
 
-    const project = await db.project.findUnique({
-      where: { id: params.id },
-      include: {
-        creator: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
-    });
+    const project = await projectService.getProjectById(params.id);
 
     if (!project) {
       return serverError('Project not found');
     }
 
-    // Safe JSON parsing with fallbacks
-    let techStack, previewImages, metadata;
-    try {
-      techStack = JSON.parse(project.techStack as string);
-    } catch {
-      techStack = [];
-    }
-    try {
-      previewImages = JSON.parse(project.previewImages as string);
-    } catch {
-      previewImages = [];
-    }
-    try {
-      metadata = project.metadata ? JSON.parse(project.metadata as string) : null;
-    } catch {
-      metadata = null;
-    }
-
-    const formatted = {
-      ...project,
-      techStack,
-      previewImages,
-      metadata,
-    };
-
-    return success(formatted);
+    return success(project);
   } catch (err) {
     console.error('GET /api/admin/projects/[id] error:', err);
     return serverError();
@@ -72,24 +36,20 @@ export async function PUT(
 
     const data = await request.json();
 
-    const project = await db.project.update({
-      where: { id: params.id },
-      data: {
-        ...data,
-        techStack: JSON.stringify(data.techStack || []),
-        previewImages: JSON.stringify(data.previewImages || []),
-        metadata: data.metadata ? JSON.stringify(data.metadata) : null,
-      },
+    const project = await projectService.adminUpdateProject(params.id, {
+      title: data.title,
+      description: data.description,
+      techStack: data.techStack || [],
+      category: data.category,
+      previewImages: data.previewImages || [],
+      externalLink: data.externalLink,
     });
 
-    const formatted = {
-      ...project,
-      techStack: JSON.parse(project.techStack as string),
-      previewImages: JSON.parse(project.previewImages as string),
-      metadata: project.metadata ? JSON.parse(project.metadata as string) : null,
-    };
+    if (!project) {
+      return serverError('Project not found');
+    }
 
-    return success(formatted);
+    return success(project);
   } catch (err) {
     console.error('PUT /api/admin/projects/[id] error:', err);
     return serverError();
@@ -104,7 +64,11 @@ export async function DELETE(
     const auth = authenticateAdmin(request);
     if (!auth) return unauthorized();
 
-    await db.project.delete({ where: { id: params.id } });
+    const deleted = await projectService.adminDeleteProject(params.id);
+
+    if (!deleted) {
+      return serverError('Project not found');
+    }
 
     return success({ message: 'Project deleted successfully' });
   } catch (err) {

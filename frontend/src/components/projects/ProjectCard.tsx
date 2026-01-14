@@ -10,14 +10,16 @@ interface ProjectCardProps {
 export function ProjectCard({ project }: ProjectCardProps) {
   const techStack = normalizeTechStack(project.techStack);
   const previewImages = normalizePreviewImages(project.previewImages);
+  const firstImage = previewImages[0];
+  const hasValidImage = firstImage && typeof firstImage === 'string' && (firstImage.startsWith('http://') || firstImage.startsWith('https://') || firstImage.startsWith('/'));
 
   return (
     <Link href={`/projects/${project.id}`}>
       <div className="group bg-card border border-border rounded-lg overflow-hidden hover:border-borderHover transition-all duration-300 h-full flex flex-col">
-        {previewImages[0] && (
+        {hasValidImage && (
           <div className="relative aspect-video overflow-hidden">
             <Image
-              src={previewImages[0]}
+              src={firstImage}
               alt={project.title}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"

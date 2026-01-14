@@ -36,8 +36,29 @@ export interface UpdateProjectInput {
 }
 
 export const projectService = {
-  /**
-   * Get all public projects with optional filters
+  /**   * Get all projects (admin view - no filters)
+   */
+  async getAllProjects() {
+    const projects = await db.project.findMany({
+      include: {
+        creator: {
+          select: { id: true, name: true, email: true },
+        },
+        collaborators: {
+          include: {
+            creator: {
+              select: { id: true, name: true },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return projects.map(this.normalizeProject);
+  },
+
+  /**   * Get all public projects with optional filters
    */
   async getPublicProjects(filters: ProjectFilters = {}) {
     const where: any = { isPublic: true };
@@ -86,6 +107,30 @@ export const projectService = {
       include: {
         creator: {
           select: { id: true, name: true },
+        },
+        collaborators: {
+          include: {
+            creator: {
+              select: { id: true, name: true },
+            },
+          },
+        },
+      },
+    });
+
+    if (!project) return null;
+    return this.normalizeProject(project);
+  },
+
+  /**
+   * Get any project by ID (admin view - no isPublic filter)
+   */
+  async getProjectById(projectId: string) {
+    const project = await db.project.findUnique({
+      where: { id: projectId },
+      include: {
+        creator: {
+          select: { id: true, name: true, email: true },
         },
         collaborators: {
           include: {
@@ -160,6 +205,27 @@ export const projectService = {
   },
 
   /**
+   * Update existing project (admin - no permission check)
+   */
+  async adminUpdateProject(projectId: string, input: UpdateProjectInput) {
+    const data: any = {};
+    if (input.title !== undefined) data.title = input.title;
+    if (input.description !== undefined) data.description = input.description;
+    if (input.techStack !== undefined) data.techStack = JSON.stringify(input.techStack);
+    if (input.category !== undefined) data.category = input.category;
+    if (input.previewImages !== undefined) data.previewImages = JSON.stringify(input.previewImages);
+    if (input.externalLink !== undefined) data.externalLink = input.externalLink;
+    if (input.isPublic !== undefined) data.isPublic = input.isPublic;
+
+    const project = await db.project.update({
+      where: { id: projectId },
+      data,
+    });
+
+    return this.normalizeProject(project);
+  },
+
+  /**
    * Update existing project
    */
   async updateProject(projectId: string, creatorId: string, input: UpdateProjectInput) {
@@ -182,6 +248,17 @@ export const projectService = {
     });
 
     return this.normalizeProject(project);
+  },
+
+  /**
+   * Delete project (admin - no permission check)
+   */
+  async adminDeleteProject(projectId: string) {
+    await db.project.delete({
+      where: { id: projectId },
+    });
+
+    return true;
   },
 
   /**
@@ -241,7 +318,7 @@ export const projectService = {
       ...project,
       techStack: normalizeTechStack(project.techStack),
       previewImages: normalizePreviewImages(project.previewImages),
-      metadata: project.metadata ? this.parseJSON(project.metadata) : null,
+      metadata: project.metadata ? projectService.parseJSON(project.metadata) : null,
     };
   },
 

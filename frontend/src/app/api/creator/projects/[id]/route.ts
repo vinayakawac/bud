@@ -1,8 +1,7 @@
 import { NextRequest } from 'next/server';
-import { db } from '@/lib/server/db';
+import { projectService } from '@/domain/project/service';
 import { authenticateCreator } from '@/lib/server/creatorAuth';
 import { success, error } from '@/lib/server/response';
-import { canEditProject, isPrimaryCreator } from '@/lib/server/collaboration';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,59 +17,13 @@ export async function GET(
       return error('Unauthorized', 401);
     }
 
-    const project = await db.project.findUnique({
-      where: { id: params.id },
-      include: {
-        collaborators: {
-          include: {
-            creator: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-      },
-    });
+    const project = await projectService.getCreatorProjectById(params.id, creatorPayload.creatorId);
 
     if (!project) {
       return error('Project not found', 404);
     }
 
-    // Verify access (owner or collaborator)
-    const hasAccess = await canEditProject(params.id, creatorPayload.creatorId);
-    if (!hasAccess) {
-      return error('Forbidden: You do not have access to this project', 403);
-    }
-
-    // Parse JSON fields with safe fallbacks
-    let techStack, previewImages, metadata;
-    try {
-      techStack = JSON.parse(project.techStack as string);
-    } catch {
-      techStack = Array.isArray(project.techStack) ? project.techStack : [project.techStack];
-    }
-    try {
-      previewImages = JSON.parse(project.previewImages as string);
-    } catch {
-      previewImages = Array.isArray(project.previewImages) ? project.previewImages : [];
-    }
-    try {
-      metadata = project.metadata ? JSON.parse(project.metadata as string) : null;
-    } catch {
-      metadata = null;
-    }
-
-    const formattedProject = {
-      ...project,
-      techStack,
-      previewImages,
-      metadata,
-    };
-
-    return success({ project: formattedProject });
+    return success({ project });
   } catch (err: any) {
     console.error('GET /api/creator/projects/[id] error:', err);
     return error(`Failed to fetch project: ${err.message}`, 500);
@@ -98,32 +51,24 @@ export async function PUT(
       externalLink,
     } = await request.json();
 
-    // Verify project exists
-    const existingProject = await db.project.findUnique({
-      where: { id: params.id },
-    });
-
-    if (!existingProject) {
-      return error('Project not found', 404);
-    }
-
-    // Check if user has edit access (owner or collaborator)
-    const hasAccess = await canEditProject(params.id, creatorPayload.creatorId);
+    // Check if user has edit access
+    const hasAccess = await projectService.canEditProject(params.id, creatorPayload.creatorId);
     if (!hasAccess) {
       return error('Forbidden: You do not have permission to edit this project', 403);
     }
 
-    const project = await db.project.update({
-      where: { id: params.id },
-      data: {
-        title,
-        description,
-        techStack: JSON.stringify(techStack), // Ensure array is stored as JSON
-        category,
-        previewImages: JSON.stringify(previewImages || []), // Ensure array is stored as JSON
-        externalLink,
-      },
+    const project = await projectService.updateProject(params.id, creatorPayload.creatorId, {
+      title,
+      description,
+      techStack,
+      category,
+      previewImages: previewImages || [],
+      externalLink,
     });
+
+    if (!project) {
+      return error('Project not found', 404);
+    }
 
     return success({ project });
   } catch (err: any) {
@@ -144,24 +89,17 @@ export async function DELETE(
       return error('Unauthorized', 401);
     }
 
-    // Verify project exists
-    const existingProject = await db.project.findUnique({
-      where: { id: params.id },
-    });
-
-    if (!existingProject) {
-      return error('Project not found', 404);
-    }
-
     // Only primary creator can delete
-    const isOwner = await isPrimaryCreator(params.id, creatorPayload.creatorId);
+    const isOwner = await projectService.isPrimaryCreator(params.id, creatorPayload.creatorId);
     if (!isOwner) {
       return error('Forbidden: Only the primary creator can delete this project', 403);
     }
 
-    await db.project.delete({
-      where: { id: params.id },
-    });
+    const deleted = await projectService.deleteProject(params.id, creatorPayload.creatorId);
+
+    if (!deleted) {
+      return error('Project not found', 404);
+    }
 
     return success({ message: 'Project deleted successfully' });
   } catch (err: any) {

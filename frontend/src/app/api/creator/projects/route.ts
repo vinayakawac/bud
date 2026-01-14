@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
-import { db } from '@/lib/server/db';
+import { projectService } from '@/domain/project/service';
+import { creatorService } from '@/domain/creator/service';
 import { authenticateCreator } from '@/lib/server/creatorAuth';
 import { success, error } from '@/lib/server/response';
 
@@ -15,18 +16,12 @@ export async function GET(request: NextRequest) {
     }
 
     // Verify terms accepted
-    const creator = await db.creator.findUnique({
-      where: { id: creatorPayload.creatorId },
-    });
-
-    if (!creator?.termsAcceptedAt) {
+    const hasAccepted = await creatorService.hasAcceptedTerms(creatorPayload.creatorId);
+    if (!hasAccepted) {
       return error('Terms must be accepted before accessing dashboard', 403);
     }
 
-    const projects = await db.project.findMany({
-      where: { creatorId: creatorPayload.creatorId },
-      orderBy: { createdAt: 'desc' },
-    });
+    const projects = await projectService.getCreatorProjects(creatorPayload.creatorId);
 
     return success({ projects });
   } catch (err: any) {
@@ -34,6 +29,7 @@ export async function GET(request: NextRequest) {
     return error(`Failed to fetch projects: ${err.message}`, 500);
   }
 }
+
 
 // POST /api/creator/projects - Create new project
 export async function POST(request: NextRequest) {
@@ -45,11 +41,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify terms accepted
-    const creator = await db.creator.findUnique({
-      where: { id: creatorPayload.creatorId },
-    });
-
-    if (!creator?.termsAcceptedAt) {
+    const hasAccepted = await creatorService.hasAcceptedTerms(creatorPayload.creatorId);
+    if (!hasAccepted) {
       return error('Terms must be accepted before creating projects', 403);
     }
 
@@ -66,16 +59,15 @@ export async function POST(request: NextRequest) {
       return error('Title, description, tech stack, and category are required', 400);
     }
 
-    const project = await db.project.create({
-      data: {
-        title,
-        description,
-        techStack: JSON.stringify(techStack), // Ensure array is stored as JSON
-        category,
-        previewImages: JSON.stringify(previewImages || []), // Ensure array is stored as JSON
-        externalLink: externalLink || '',
-        creatorId: creatorPayload.creatorId,
-      },
+    const project = await projectService.createProject({
+      title,
+      description,
+      techStack,
+      category,
+      previewImages: previewImages || [],
+      externalLink: externalLink || '',
+      creatorId: creatorPayload.creatorId,
+      isPublic: false, // Creator projects default to private
     });
 
     return success({ project }, 201);

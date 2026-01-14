@@ -61,6 +61,9 @@ export default function ProjectDetailPage() {
   }
 
   const previewImages = normalizePreviewImages(project.previewImages);
+  const validImages = previewImages.filter(img => 
+    img && typeof img === 'string' && (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('/'))
+  );
 
   return (
     <div className="min-h-screen py-12">
@@ -119,9 +122,9 @@ export default function ProjectDetailPage() {
             </div>
           </div>
 
-          {previewImages.length > 0 && (
+          {validImages.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {previewImages.map((image, index) => (
+              {validImages.map((image, index) => (
                 <div
                   key={index}
                   className="relative aspect-video rounded-lg overflow-hidden border border-border"

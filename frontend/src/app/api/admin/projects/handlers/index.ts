@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { db } from '@/lib/server/db';
+import { projectService } from '@/domain/project/service';
 import { verifyToken } from '@/lib/server/auth';
 import { success, unauthorized, serverError } from '@/lib/server/response';
 
@@ -19,29 +19,10 @@ export async function GET(request: NextRequest) {
       return unauthorized();
     }
 
-    // Admin sees ALL projects - no filters
-    // This is the superset view (public and creator APIs are subsets)
-    const projects = await db.project.findMany({
-      include: {
-        creator: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    // Admin sees ALL projects - no isPublic filter
+    const projects = await projectService.getAllProjects();
 
-    const formatted = projects.map((p: any) => ({
-      ...p,
-      techStack: JSON.parse(p.techStack),
-      previewImages: JSON.parse(p.previewImages),
-      metadata: p.metadata ? JSON.parse(p.metadata) : null,
-    }));
-
-    return success({ projects: formatted });
+    return success({ projects });
   } catch (err) {
     console.error('GET /api/admin/projects error:', err);
     return serverError();
@@ -64,23 +45,18 @@ export async function POST(request: NextRequest) {
 
     const data = await request.json();
 
-    const project = await db.project.create({
-      data: {
-        ...data,
-        techStack: JSON.stringify(data.techStack || []),
-        previewImages: JSON.stringify(data.previewImages || []),
-        metadata: data.metadata ? JSON.stringify(data.metadata) : null,
-      },
+    const project = await projectService.createProject({
+      title: data.title,
+      description: data.description,
+      techStack: data.techStack || [],
+      category: data.category,
+      previewImages: data.previewImages || [],
+      externalLink: data.externalLink || '',
+      creatorId: data.creatorId,
+      isPublic: data.isPublic ?? false,
     });
 
-    const formatted = {
-      ...project,
-      techStack: JSON.parse(project.techStack as string),
-      previewImages: JSON.parse(project.previewImages as string),
-      metadata: project.metadata ? JSON.parse(project.metadata as string) : null,
-    };
-
-    return success(formatted, 201);
+    return success({ project }, 201);
   } catch (err) {
     console.error('POST /api/admin/projects error:', err);
     return serverError();

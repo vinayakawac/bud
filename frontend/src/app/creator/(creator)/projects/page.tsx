@@ -160,14 +160,19 @@ export default function CreatorProjectsPage() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project) => (
+            {projects.map((project) => {
+              const previewImages = Array.isArray(project.previewImages) ? project.previewImages : [];
+              const firstImage = previewImages[0];
+              const hasValidImage = firstImage && typeof firstImage === 'string' && (firstImage.startsWith('http://') || firstImage.startsWith('https://') || firstImage.startsWith('/'));
+              
+              return (
               <div
                 key={project.id}
                 className="bg-card border border-border rounded-lg overflow-hidden"
               >
-                {project.previewImages && (
+                {hasValidImage && (
                   <img
-                    src={project.previewImages.split(',')[0]}
+                    src={firstImage}
                     alt={project.title}
                     className="w-full h-48 object-cover"
                   />
@@ -231,7 +236,8 @@ export default function CreatorProjectsPage() {
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

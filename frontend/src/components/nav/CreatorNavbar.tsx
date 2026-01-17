@@ -27,9 +27,9 @@ export function CreatorNavbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-bg/95 backdrop-blur-sm border-b border-border">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header className="sticky top-0 z-50 bg-bg border-b border-border">
+      <nav className="max-w-[1920px] mx-auto px-6">
+        <div className="flex items-center justify-between h-14">
           <Link
             href="/creator/dashboard"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -44,12 +44,12 @@ export function CreatorNavbar() {
             <span className="text-2xl font-bold text-textPrimary">O-Hub</span>
           </Link>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-8">
             <Link
               href="/creator/projects"
-              className={`transition-colors ${
+              className={`text-sm transition-colors ${
                 isActive('/creator/projects')
-                  ? 'text-accent'
+                  ? 'text-textPrimary font-medium'
                   : 'text-textSecondary hover:text-textPrimary'
               }`}
             >
@@ -57,9 +57,9 @@ export function CreatorNavbar() {
             </Link>
             <Link
               href="/creator/comments"
-              className={`transition-colors ${
+              className={`text-sm transition-colors ${
                 isActive('/creator/comments')
-                  ? 'text-accent'
+                  ? 'text-textPrimary font-medium'
                   : 'text-textSecondary hover:text-textPrimary'
               }`}
             >
@@ -67,17 +67,17 @@ export function CreatorNavbar() {
             </Link>
             <Link
               href="/creator/account"
-              className={`transition-colors ${
+              className={`text-sm transition-colors ${
                 isActive('/creator/account')
-                  ? 'text-accent'
+                  ? 'text-textPrimary font-medium'
                   : 'text-textSecondary hover:text-textPrimary'
               }`}
             >
-              Account Settings
+              Settings
             </Link>
             <button
               onClick={handleLogout}
-              className="text-textSecondary hover:text-textPrimary transition-colors"
+              className="text-sm text-textSecondary hover:text-textPrimary transition-colors"
             >
               Logout
             </button>

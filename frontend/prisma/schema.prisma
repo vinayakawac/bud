@@ -25,6 +25,13 @@ model Creator {
   isActive         Boolean   @default(true) @map("is_active")
   termsAcceptedAt  DateTime? @map("terms_accepted_at")
   createdAt        DateTime  @default(now()) @map("created_at")
+  bio              String?
+  pronouns         String?
+  website          String?
+  location         String?
+  socialLinks      String[]  @default([]) @map("social_links")
+  showLocalTime    Boolean   @default(true) @map("show_local_time")
+  timezone         String?
   
   projects                Project[]
   collaborations          ProjectCollaborator[]

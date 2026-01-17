@@ -282,7 +282,7 @@ export default function AccountSettingsPage() {
               </ul>
 
               <button
-                onClick={handleUsernameWarningConfirm}
+                onClick={handleUsernameChangeConfirm}
                 className="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium transition-colors"
               >
                 I understand, let's change my username
@@ -333,7 +333,7 @@ export default function AccountSettingsPage() {
               </div>
 
               <button
-                onClick={handleUsernameChange}
+                onClick={() => setShowUsernameChange(true)}
                 className="w-full px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-md text-sm font-medium transition-colors"
               >
                 Change username

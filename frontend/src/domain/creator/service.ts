@@ -10,6 +10,7 @@ import bcrypt from 'bcrypt';
 export interface CreateCreatorInput {
   name: string;
   email: string;
+  username: string;
   password: string;
 }
 
@@ -50,6 +51,7 @@ export const creatorService = {
       data: {
         name: input.name,
         email: input.email,
+        username: input.username,
         passwordHash,
       },
     });

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Search, Grid3x3, Plus, MapPin, Clock, Linkedin } from 'lucide-react';
+import { Search, Grid3x3, Plus, MapPin, Linkedin } from 'lucide-react';
 import { ProjectCard } from '@/components/projects/ProjectCard';
 import type { Project } from '@/types';
 
@@ -11,6 +11,7 @@ interface Creator {
   id: string;
   name: string;
   email: string;
+  username: string;
   termsAccepted: boolean;
   projectCount: number;
   createdAt: string;
@@ -158,7 +159,6 @@ export default function CreatorDashboardPage() {
         name: creator.name,
         bio: creator.bio || 'Student. Enthusiastic Programmer.',
         pronouns: 'they/them',
-        company: '',
         location: 'Bangalore, Karnataka, India',
         website: creator.website || '',
         showProBadge: false,

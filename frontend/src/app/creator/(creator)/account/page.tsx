@@ -7,6 +7,7 @@ interface Creator {
   id: string;
   name: string;
   email: string;
+  username: string;
   termsAccepted: boolean;
   projectCount: number;
   createdAt: string;

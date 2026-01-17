@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
-import { normalizeTechStack } from '@/lib/utils/normalize';
 
 export default function CreatorProfilePage() {
   const params = useParams();
@@ -85,7 +84,7 @@ export default function CreatorProfilePage() {
               </h2>
               <div className="grid gap-4">
                 {creator.primaryProjects.map((project: any) => {
-                  const techStack = normalizeTechStack(project.techStack);
+                  // Domain service guarantees techStack is already an array
                   return (
                   <Link
                     key={project.id}
@@ -99,7 +98,7 @@ export default function CreatorProfilePage() {
                       {project.description}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {techStack.slice(0, 3).map((tech: string) => (
+                      {project.techStack.slice(0, 3).map((tech: string) => (
                         <span
                           key={tech}
                           className="px-2 py-1 bg-accent/10 text-accent text-xs rounded"
@@ -107,9 +106,9 @@ export default function CreatorProfilePage() {
                           {tech}
                         </span>
                       ))}
-                      {techStack.length > 3 && (
+                      {project.techStack.length > 3 && (
                         <span className="px-2 py-1 text-textSecondary text-xs">
-                          +{techStack.length - 3} more
+                          +{project.techStack.length - 3} more
                         </span>
                       )}
                     </div>
@@ -128,7 +127,7 @@ export default function CreatorProfilePage() {
               </h2>
               <div className="grid gap-4">
                 {creator.collaborationProjects.map((project: any) => {
-                  const techStack = normalizeTechStack(project.techStack);
+                  // Domain service guarantees techStack is already an array
                   return (
                   <Link
                     key={project.id}
@@ -142,7 +141,7 @@ export default function CreatorProfilePage() {
                       {project.description}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {techStack.slice(0, 3).map((tech: string) => (
+                      {project.techStack.slice(0, 3).map((tech: string) => (
                         <span
                           key={tech}
                           className="px-2 py-1 bg-accent/10 text-accent text-xs rounded"
@@ -150,9 +149,9 @@ export default function CreatorProfilePage() {
                           {tech}
                         </span>
                       ))}
-                      {techStack.length > 3 && (
+                      {project.techStack.length > 3 && (
                         <span className="px-2 py-1 text-textSecondary text-xs">
-                          +{techStack.length - 3} more
+                          +{project.techStack.length - 3} more
                         </span>
                       )}
                     </div>

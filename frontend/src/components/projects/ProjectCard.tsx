@@ -1,16 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Project } from '@/types';
-import { normalizeTechStack, normalizePreviewImages } from '@/lib/utils/normalize';
 
 interface ProjectCardProps {
   project: Project;
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
-  const techStack = normalizeTechStack(project.techStack);
-  const previewImages = normalizePreviewImages(project.previewImages);
-  const firstImage = previewImages[0];
+  // Domain services guarantee these are already arrays
+  const firstImage = project.previewImages[0];
   const hasValidImage = firstImage && typeof firstImage === 'string' && (firstImage.startsWith('http://') || firstImage.startsWith('https://') || firstImage.startsWith('/'));
 
   return (
@@ -43,7 +41,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           </p>
 
           <div className="flex flex-wrap gap-2">
-            {techStack.slice(0, 3).map((tech) => (
+            {project.techStack.slice(0, 3).map((tech) => (
               <span
                 key={tech}
                 className="text-xs px-2 py-1 bg-accent/10 text-accent rounded"
@@ -51,9 +49,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
                 {tech}
               </span>
             ))}
-            {techStack.length > 3 && (
+            {project.techStack.length > 3 && (
               <span className="text-xs px-2 py-1 text-textSecondary">
-                +{techStack.length - 3} more
+                +{project.techStack.length - 3} more
               </span>
             )}
           </div>

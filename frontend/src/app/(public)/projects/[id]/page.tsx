@@ -7,7 +7,6 @@ import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import type { Project } from '@/types';
-import { normalizeTechStack, normalizePreviewImages } from '@/lib/utils/normalize';
 
 export default function ProjectDetailPage() {
   const params = useParams();
@@ -60,8 +59,8 @@ export default function ProjectDetailPage() {
     );
   }
 
-  const previewImages = normalizePreviewImages(project.previewImages);
-  const validImages = previewImages.filter(img => 
+  // Domain service guarantees previewImages is already an array
+  const validImages = project.previewImages.filter(img => 
     img && typeof img === 'string' && (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('/'))
   );
 
@@ -151,7 +150,7 @@ export default function ProjectDetailPage() {
               Technology Stack
             </h2>
             <div className="flex flex-wrap gap-3">
-              {normalizeTechStack(project.techStack).map((tech) => (
+              {project.techStack.map((tech) => (
                 <span
                   key={tech}
                   className="px-4 py-2 bg-accent/10 border border-accent/30 text-accent rounded-lg font-medium"

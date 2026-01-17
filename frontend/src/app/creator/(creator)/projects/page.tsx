@@ -161,8 +161,8 @@ export default function CreatorProjectsPage() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project) => {
-              const previewImages = Array.isArray(project.previewImages) ? project.previewImages : [];
-              const firstImage = previewImages[0];
+              // Domain service guarantees previewImages is already an array
+              const firstImage = project.previewImages[0];
               const hasValidImage = firstImage && typeof firstImage === 'string' && (firstImage.startsWith('http://') || firstImage.startsWith('https://') || firstImage.startsWith('/'));
               
               return (

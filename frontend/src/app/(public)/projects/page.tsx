@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ProjectCard } from '@/components/projects/ProjectCard';
@@ -7,7 +8,7 @@ import { ProjectFilters } from '@/components/projects/ProjectFilters';
 import { api } from '@/lib/api';
 import type { Project } from '@/types';
 
-export default function ProjectsPage() {
+function ProjectsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -118,5 +119,17 @@ export default function ProjectsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProjectsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-textSecondary">Loading...</div>
+      </div>
+    }>
+      <ProjectsContent />
+    </Suspense>
   );
 }

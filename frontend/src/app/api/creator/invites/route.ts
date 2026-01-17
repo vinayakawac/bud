@@ -3,6 +3,8 @@ import { authenticateCreator } from '@/lib/server/creatorAuth';
 import { db } from '@/lib/server/db';
 import { error, success } from '@/lib/server/response';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const creator = await authenticateCreator(request);

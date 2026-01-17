@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { authenticateCreator } from '@/lib/server/creatorAuth';
 import { db } from '@/lib/server/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function PUT(request: NextRequest) {
   try {
     // Verify authentication

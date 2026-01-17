@@ -8,16 +8,22 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, password } = await request.json();
+    const { name, email, password, username } = await request.json();
 
-    if (!name || !email || !password) {
-      return error('Name, email, and password are required', 400);
+    if (!name || !email || !password || !username) {
+      return error('Name, email, username, and password are required', 400);
     }
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return error('Invalid email format', 400);
+    }
+
+    // Validate username format
+    const usernameRegex = /^[a-zA-Z0-9_-]{3,30}$/;
+    if (!usernameRegex.test(username)) {
+      return error('Username must be 3-30 characters and can only contain letters, numbers, hyphens, and underscores', 400);
     }
 
     // Validate password strength
@@ -34,6 +40,15 @@ export async function POST(request: NextRequest) {
       return error('Email already registered', 409);
     }
 
+    // Check if username already exists
+    const existingUsername = await db.creator.findUnique({
+      where: { username },
+    });
+
+    if (existingUsername) {
+      return error('Username already taken', 409);
+    }
+
     // Hash password
     const passwordHash = await bcrypt.hash(password, 10);
 
@@ -42,6 +57,7 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         email,
+        username,
         passwordHash,
         isActive: true,
       },

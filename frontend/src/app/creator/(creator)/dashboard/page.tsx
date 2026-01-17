@@ -202,7 +202,7 @@ export default function CreatorDashboardPage() {
                   {creator?.name || 'oFive'}
                 </h2>
                 <p className="text-xs text-textSecondary mb-3">
-                  vinayakawac · {editForm.pronouns || 'they/them'}
+                  {creator?.username || 'vinayakawac'} · {editForm.pronouns || 'they/them'}
                 </p>
                 <p className="text-xs text-textPrimary mb-4 px-2">
                   {editForm.bio || 'Student. Enthusiastic Programmer.'}

@@ -155,7 +155,7 @@ export default function CreatorAccountPage() {
                   {creator?.name || 'oFive'}
                 </h2>
                 <p className="text-xs text-textSecondary">
-                  (vinayakawac)
+                  ({creator?.username || 'vinayakawac'})
                 </p>
               </div>
             </div>

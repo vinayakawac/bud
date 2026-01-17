@@ -62,13 +62,32 @@ export default function AccountSettingsPage() {
   };
 
   const handleUsernameChangeConfirm = async () => {
-    // Here you would call your API to change username
-    console.log('Changing username to:', newUsername);
-    
-    // Close all modals
-    setShowUsernameConfirm(false);
-    setShowUsernameChange(false);
-    setNewUsername('');
+    // Call API to change username
+    try {
+      const response = await fetch('/api/creator/username', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: newUsername }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to change username');
+      }
+
+      const data = await response.json();
+      setCreator(data.data.creator);
+      
+      // Close all modals and reset
+      setShowUsernameConfirm(false);
+      setNewUsername('');
+      
+      alert('Username changed successfully!');
+    } catch (err: any) {
+      alert(err.message || 'Failed to change username');
+    }
   };
 
   const handleDeleteAccount = async () => {

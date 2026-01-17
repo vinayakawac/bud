@@ -4,107 +4,104 @@ interface Filters {
   category: string;
   tech: string;
   year: string;
+  sort: string;
 }
 
 interface ProjectFiltersProps {
   filters: Filters;
   onFilterChange: (filters: Filters) => void;
+  categories: string[];
+  technologies: string[];
 }
 
-export function ProjectFilters({ filters, onFilterChange }: ProjectFiltersProps) {
-  const categories = [
-    'Web Application',
-    'Mobile App',
-    'AI/ML',
-    'Data Visualization',
-    'Productivity',
-  ];
+export function ProjectFilters({ 
+  filters, 
+  onFilterChange,
+  categories = [],
+}: ProjectFiltersProps) {
+  const handleClearFilters = () => {
+    onFilterChange({ category: '', tech: '', year: '', sort: 'latest' });
+  };
 
-  const techs = [
-    'React',
-    'Next.js',
-    'Node.js',
-    'Python',
-    'TypeScript',
-    'PostgreSQL',
-    'MongoDB',
-  ];
-
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 3 }, (_, i) => currentYear - i);
+  const hasActiveFilters = filters.category || filters.tech || filters.year;
 
   return (
-    <div className="mb-8 p-6 bg-card border border-border rounded-lg">
-      <h2 className="text-lg font-bold mb-4 text-textPrimary">
-        Filters
-      </h2>
+    <aside className="w-full lg:w-64 flex-shrink-0">
+      <div className="sticky top-24 space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-textPrimary">Filters</h2>
+          {hasActiveFilters && (
+            <button
+              onClick={handleClearFilters}
+              className="text-xs text-accent hover:text-accent/80 transition-colors"
+            >
+              Clear all
+            </button>
+          )}
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div>
-          <label className="block text-sm font-medium mb-2 text-textPrimary">
-            Category
-          </label>
+        {/* Sort */}
+        <div className="bg-card border border-border rounded-lg p-4">
+          <h3 className="text-sm font-semibold mb-3 text-textPrimary">Sort by</h3>
           <select
-            value={filters.category}
-            onChange={(e) =>
-              onFilterChange({ ...filters, category: e.target.value })
-            }
-            className="w-full h-[42px] px-4 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:border-accent transition-colors"
+            value={filters.sort}
+            onChange={(e) => onFilterChange({ ...filters, sort: e.target.value })}
+            className="w-full px-3 py-2 bg-bgSecondary border border-border rounded text-sm text-textPrimary focus:outline-none focus:border-accent transition-colors"
           >
-            <option value="">All Categories</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
+            <option value="latest">Latest</option>
+            <option value="rating">Highest Rated</option>
+            <option value="views">Most Popular</option>
+            <option value="comments">Most Discussed</option>
           </select>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-2 text-textPrimary">
-            Technology
-          </label>
-          <select
-            value={filters.tech}
-            onChange={(e) => onFilterChange({ ...filters, tech: e.target.value })}
-            className="w-full h-[42px] px-4 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:border-accent transition-colors"
-          >
-            <option value="">All Technologies</option>
-            {techs.map((tech) => (
-              <option key={tech} value={tech}>
-                {tech}
-              </option>
+        {/* Category Filter */}
+        <div className="bg-card border border-border rounded-lg p-4">
+          <h3 className="text-sm font-semibold mb-3 text-textPrimary">Category</h3>
+          <div className="space-y-2">
+            {categories.map((category) => (
+              <label
+                key={category}
+                className="flex items-center gap-2 cursor-pointer group"
+              >
+                <input
+                  type="radio"
+                  name="category"
+                  checked={filters.category === category}
+                  onChange={() =>
+                    onFilterChange({
+                      ...filters,
+                      category: filters.category === category ? '' : category,
+                    })
+                  }
+                  className="w-4 h-4 text-accent border-border focus:ring-accent focus:ring-offset-0"
+                />
+                <span className="text-sm text-textSecondary group-hover:text-textPrimary transition-colors">
+                  {category}
+                </span>
+              </label>
             ))}
-          </select>
+          </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-2 text-textPrimary">
-            Year
-          </label>
+        {/* Year Filter */}
+        <div className="bg-card border border-border rounded-lg p-4">
+          <h3 className="text-sm font-semibold mb-3 text-textPrimary">Year</h3>
           <select
             value={filters.year}
-            onChange={(e) => onFilterChange({ ...filters, year: e.target.value })}
-            className="w-full h-[42px] px-4 bg-inputBg border border-inputBorder rounded-lg text-textPrimary focus:outline-none focus:border-accent transition-colors"
+            onChange={(e) =>
+              onFilterChange({ ...filters, year: e.target.value })
+            }
+            className="w-full px-3 py-2 bg-bgSecondary border border-border rounded text-sm text-textPrimary focus:outline-none focus:border-accent transition-colors"
           >
-            <option value="">All Years</option>
-            {years.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
+            <option value="">All time</option>
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
           </select>
         </div>
       </div>
-
-      {(filters.category || filters.tech || filters.year) && (
-        <button
-          onClick={() => onFilterChange({ category: '', tech: '', year: '' })}
-          className="mt-4 text-sm text-accent hover:underline"
-        >
-          Clear all filters
-        </button>
-      )}
-    </div>
+    </aside>
   );
 }

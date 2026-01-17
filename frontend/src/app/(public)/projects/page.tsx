@@ -1,72 +1,121 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { ProjectCard } from '@/components/projects/ProjectCard';
 import { ProjectFilters } from '@/components/projects/ProjectFilters';
 import { api } from '@/lib/api';
 import type { Project } from '@/types';
 
 export default function ProjectsPage() {
-  const [filters, setFilters] = useState({
-    category: '',
-    tech: '',
-    year: '',
-  });
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Extract filters from URL
+  const category = searchParams.get('category') || '';
+  const tech = searchParams.get('tech') || '';
+  const year = searchParams.get('year') || '';
+  const sort = searchParams.get('sort') || 'latest';
+
+  const filters = { category, tech, year, sort };
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['projects', filters],
     queryFn: () => api.getProjects(filters),
   });
 
+  // Fetch dynamic filter options
+  const { data: filterOptions } = useQuery({
+    queryKey: ['filter-options'],
+    queryFn: () => api.getFilterOptions(),
+  });
+
   const projects = data?.data || [];
+  const categories = filterOptions?.data?.categories || [];
+  const techs = filterOptions?.data?.technologies || [];
+
+  const handleFilterChange = (newFilters: typeof filters) => {
+    const params = new URLSearchParams();
+    if (newFilters.category) params.set('category', newFilters.category);
+    if (newFilters.tech) params.set('tech', newFilters.tech);
+    if (newFilters.year) params.set('year', newFilters.year);
+    if (newFilters.sort) params.set('sort', newFilters.sort);
+    
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
   return (
-    <div className="min-h-screen py-12">
+    <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-textPrimary">
-            All Projects
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-textPrimary">
+            Browse Projects
           </h1>
-          <p className="text-lg text-textSecondary">
-            Explore our complete collection of projects
+          <p className="text-textSecondary">
+            Discover {projects.length} cutting-edge projects from our community
           </p>
         </div>
 
-        <ProjectFilters filters={filters} onFilterChange={setFilters} />
+        {/* Sidebar + Grid Layout */}
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar Filters */}
+          <ProjectFilters 
+            filters={filters} 
+            onFilterChange={handleFilterChange}
+            categories={categories}
+            technologies={techs}
+          />
 
-        {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="h-96 bg-card rounded-lg animate-pulse"
-              />
-            ))}
-          </div>
-        )}
+          {/* Main Content Area */}
+          <div className="flex-1 min-w-0">
+            {/* Loading State */}
+            {isLoading && (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-96 bg-card border border-border rounded-lg animate-pulse"
+                  />
+                ))}
+              </div>
+            )}
 
-        {error && (
-          <div className="text-center py-12">
-            <p className="text-red-500">Failed to load projects. Please try again later.</p>
-          </div>
-        )}
+            {/* Error State */}
+            {error && (
+              <div className="bg-card border border-border rounded-lg p-12 text-center">
+                <p className="text-red-400 mb-2">Failed to load projects</p>
+                <p className="text-sm text-textSecondary">
+                  Please try again later
+                </p>
+              </div>
+            )}
 
-        {!isLoading && !error && projects.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-textSecondary">
-              No projects found matching your criteria.
-            </p>
-          </div>
-        )}
+            {/* Empty State */}
+            {!isLoading && !error && projects.length === 0 && (
+              <div className="bg-card border border-dashed border-border rounded-lg p-12 text-center">
+                <p className="text-lg text-textPrimary mb-2">No projects found</p>
+                <p className="text-sm text-textSecondary">
+                  Try adjusting your filters to see more results
+                </p>
+              </div>
+            )}
 
-        {!isLoading && !error && projects.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project: Project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
+            {/* Project Grid */}
+            {!isLoading && !error && projects.length > 0 && (
+              <>
+                <div className="mb-4 text-sm text-textSecondary">
+                  Showing {projects.length} project{projects.length !== 1 ? 's' : ''}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {projects.map((project: Project) => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

@@ -26,13 +26,20 @@ export const api = {
     category?: string;
     tech?: string;
     year?: string;
+    sort?: string;
   }): Promise<ApiResponse<Project[]>> => {
     const params = new URLSearchParams();
     if (filters?.category) params.append('category', filters.category);
     if (filters?.tech) params.append('tech', filters.tech);
     if (filters?.year) params.append('year', filters.year);
+    if (filters?.sort) params.append('sort', filters.sort);
 
     const { data } = await apiClient.get(`/projects?${params.toString()}`);
+    return data;
+  },
+
+  getFilterOptions: async (): Promise<ApiResponse<{ categories: string[]; technologies: string[] }>> => {
+    const { data } = await apiClient.get('/projects/filter-options');
     return data;
   },
 

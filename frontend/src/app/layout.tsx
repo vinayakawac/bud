@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   title: 'O-Hub - Portfolio Platform',
   description: 'Browse and explore cutting-edge projects across various technologies',
   keywords: ['projects', 'portfolio', 'showcase', 'development'],
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({

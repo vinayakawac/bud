@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
-import { Star, Eye, Clock } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Tabs } from '@/components/ui/Tabs';
 import type { Project } from '@/types';
@@ -101,6 +100,13 @@ export default function ProjectDetailPage() {
                 <span className="px-3 py-1 bg-accent/20 border border-accent/30 rounded text-accent text-sm font-medium">
                   {project.category}
                 </span>
+                <div className="flex items-center gap-1 text-sm">
+                  <span className="text-yellow-500">★</span>
+                  <span className="text-textPrimary font-medium">{rating.toFixed(1)}</span>
+                  {ratingCount > 0 && (
+                    <span className="text-textSecondary">({ratingCount})</span>
+                  )}
+                </div>
               </div>
 
               <h1 className="text-3xl md:text-4xl font-bold mb-3 text-textPrimary">
@@ -119,24 +125,10 @@ export default function ProjectDetailPage() {
                 </Link>
               )}
 
-              <div className="flex flex-wrap items-center gap-3 text-xs text-textSecondary mb-6">
-                <span className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5" />
-                  {new Date(project.updatedAt).toDateString()}
-                </span>
+              <div className="flex flex-wrap gap-2 text-xs text-textSecondary mb-6">
+                <span>Updated: {new Date(project.updatedAt).toDateString()}</span>
                 <span>•</span>
-                <span className="flex items-center gap-1.5">
-                  <Eye className="w-3.5 h-3.5" />
-                  {views} views
-                </span>
-                <span>•</span>
-                <div className="flex items-center gap-1.5">
-                  <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
-                  <span className="font-medium text-textPrimary">{rating.toFixed(1)}</span>
-                  {ratingCount > 0 && (
-                    <span>({ratingCount})</span>
-                  )}
-                </div>
+                <span>{views} views</span>
               </div>
 
               {/* Primary CTAs */}
@@ -203,7 +195,7 @@ export default function ProjectDetailPage() {
                           {project.techStack.map((tech) => (
                             <span
                               key={tech}
-                              className="px-3 py-1 text-sm font-semibold rounded-full bg-neutral-800 text-neutral-200 hover:bg-neutral-700 transition-colors"
+                              className="px-3 py-1.5 text-sm rounded bg-white/5 text-blue-400 border border-white/10 hover:border-blue-400/50 transition-colors cursor-pointer"
                             >
                               {tech}
                             </span>
@@ -257,12 +249,11 @@ export default function ProjectDetailPage() {
                             {rating.toFixed(1)}
                           </div>
                           <div>
-                            <div className="flex gap-1 text-yellow-500 text-xl">
+                            <div className="flex text-yellow-500 text-xl">
                               {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`w-5 h-5 ${i < Math.round(rating) ? 'fill-yellow-500' : 'fill-none'}`}
-                                />
+                                <span key={i}>
+                                  {i < Math.round(rating) ? '★' : '☆'}
+                                </span>
                               ))}
                             </div>
                             <p className="text-sm text-textSecondary">

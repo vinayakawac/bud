@@ -12,6 +12,7 @@ export interface ProjectFilters {
   category?: string;
   tech?: string;
   year?: number;
+  sort?: string;
 }
 
 export interface CreateProjectInput {
@@ -63,14 +64,19 @@ export const projectService = {
   async getPublicProjects(filters: ProjectFilters = {}) {
     const where: any = { isPublic: true };
 
+    // Category filter
     if (filters.category && filters.category !== 'all') {
       where.category = filters.category;
     }
 
+    // Tech stack filter - check if any tech in array matches
     if (filters.tech && filters.tech !== 'all') {
-      where.techStack = { contains: filters.tech };
+      where.techStack = { 
+        has: filters.tech 
+      };
     }
 
+    // Year filter
     if (filters.year && filters.year !== 0) {
       where.createdAt = {
         gte: new Date(`${filters.year}-01-01`),
@@ -78,9 +84,20 @@ export const projectService = {
       };
     }
 
+    // Determine sort order
+    let orderBy: any = { createdAt: 'desc' }; // default: latest
+
+    if (filters.sort === 'rating') {
+      orderBy = { metadata: { path: ['averageRating'], order: 'desc' } };
+    } else if (filters.sort === 'views') {
+      orderBy = { metadata: { path: ['views'], order: 'desc' } };
+    } else if (filters.sort === 'comments') {
+      orderBy = { metadata: { path: ['commentCount'], order: 'desc' } };
+    }
+
     const projects = await db.project.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
+      orderBy,
       include: {
         creator: {
           select: { id: true, name: true },
@@ -331,5 +348,43 @@ export const projectService = {
     } catch {
       return null;
     }
+  },
+
+  /**
+   * Get all available categories from public projects
+   */
+  async getAvailableCategories(): Promise<string[]> {
+    const projects = await db.project.findMany({
+      where: { isPublic: true },
+      select: { category: true },
+      distinct: ['category'],
+    });
+
+    return projects
+      .map((p) => p.category)
+      .filter((c) => c && c.trim() !== '')
+      .sort();
+  },
+
+  /**
+   * Get all available technologies from public projects
+   */
+  async getAvailableTechnologies(): Promise<string[]> {
+    const projects = await db.project.findMany({
+      where: { isPublic: true },
+      select: { techStack: true },
+    });
+
+    // Flatten all tech stacks and get unique values
+    const allTechs = projects.flatMap((p) => {
+      const stack = normalizeTechStack(p.techStack);
+      return Array.isArray(stack) ? stack : [];
+    });
+
+    const uniqueTechs = [...new Set(allTechs)]
+      .filter((tech) => tech && tech.trim() !== '')
+      .sort();
+
+    return uniqueTechs;
   },
 };

@@ -11,11 +11,13 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const tech = searchParams.get('tech');
     const yearParam = searchParams.get('year');
+    const sort = searchParams.get('sort');
     
     const filters = {
       category: category || undefined,
       tech: tech || undefined,
       year: yearParam ? parseInt(yearParam) : undefined,
+      sort: sort || 'latest',
     };
 
     const projects = await projectService.getPublicProjects(filters);

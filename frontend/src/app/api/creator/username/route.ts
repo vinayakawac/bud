@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyCreatorAuth } from '@/lib/server/creatorAuth';
-import { prisma } from '@/lib/server/db';
+import { authenticateCreator } from '@/lib/server/creatorAuth';
+import { db } from '@/lib/server/db';
 
 export async function PUT(request: NextRequest) {
   try {
     // Verify authentication
-    const authResult = await verifyCreatorAuth(request);
-    if (!authResult.authenticated || !authResult.creatorId) {
+    const authPayload = await authenticateCreator(request);
+    if (!authPayload) {
       return NextResponse.json(
         { success: false, message: 'Unauthorized' },
         { status: 401 }
@@ -37,11 +37,11 @@ export async function PUT(request: NextRequest) {
     }
 
     // Check if username is already taken
-    const existingUser = await prisma.creator.findUnique({
+    const existingUser = await db.creator.findUnique({
       where: { username },
     });
 
-    if (existingUser && existingUser.id !== authResult.creatorId) {
+    if (existingUser && existingUser.id !== authPayload.creatorId) {
       return NextResponse.json(
         { success: false, message: 'Username is already taken' },
         { status: 409 }
@@ -49,8 +49,8 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update username
-    const updatedCreator = await prisma.creator.update({
-      where: { id: authResult.creatorId },
+    const updatedCreator = await db.creator.update({
+      where: { id: authPayload.creatorId },
       data: { username },
     });
 

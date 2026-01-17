@@ -19,6 +19,7 @@ model Admin {
 
 model Creator {
   id               String    @id @default(uuid())
+  username         String    @unique
   name             String
   email            String    @unique
   passwordHash     String    @map("password_hash")
@@ -39,6 +40,7 @@ model Creator {
   receivedInvitations     CollaborationInvite[] @relation("InviteReceiver")
 
   @@index([email])
+  @@index([username])
   @@index([isActive])
   @@map("creators")
 }

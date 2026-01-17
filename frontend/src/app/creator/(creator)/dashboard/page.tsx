@@ -215,17 +215,6 @@ export default function CreatorDashboardPage() {
                 </button>
               </div>
 
-              {/* Followers/Following */}
-              <div className="flex items-center justify-center gap-2 text-xs text-textSecondary mb-4 pb-4 border-b border-border">
-                <span>
-                  <span className="text-textPrimary font-medium">0</span> followers
-                </span>
-                <span>·</span>
-                <span>
-                  <span className="text-textPrimary font-medium">2</span> following
-                </span>
-              </div>
-
               {/* Additional Info */}
               <div className="space-y-2">
                 {editForm.location && (
@@ -234,10 +223,6 @@ export default function CreatorDashboardPage() {
                     <span>{editForm.location}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-2 text-xs text-textSecondary">
-                  <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span>17:06 (UTC +05:30)</span>
-                </div>
                 {editForm.socialLinks[0] && (
                   <div className="flex items-center gap-2 text-xs text-textSecondary">
                     <Linkedin className="w-3.5 h-3.5 flex-shrink-0" />

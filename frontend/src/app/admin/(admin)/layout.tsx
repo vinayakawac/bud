@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { AdminNavbar } from '@/components/nav/AdminNavbar';
+import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { verifyToken } from '@/lib/server/auth';
 
 export default async function AdminLayout({
@@ -26,9 +26,9 @@ export default async function AdminLayout({
   }
 
   return (
-    <>
-      <AdminNavbar />
-      <main className="flex-1">{children}</main>
-    </>
+    <div className="min-h-screen bg-neutral-50">
+      <AdminSidebar />
+      <main className="ml-60 min-h-screen">{children}</main>
+    </div>
   );
 }

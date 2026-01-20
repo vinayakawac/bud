@@ -19,11 +19,19 @@ export async function GET(request: NextRequest) {
       where: { id: creatorPayload.creatorId },
       select: {
         id: true,
+        username: true,
         name: true,
         email: true,
         isActive: true,
         termsAcceptedAt: true,
         createdAt: true,
+        bio: true,
+        pronouns: true,
+        website: true,
+        location: true,
+        socialLinks: true,
+        showLocalTime: true,
+        timezone: true,
         _count: {
           select: {
             projects: true,

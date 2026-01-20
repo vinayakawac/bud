@@ -16,8 +16,12 @@ interface Creator {
   projectCount: number;
   createdAt: string;
   bio?: string;
+  pronouns?: string;
   website?: string;
-  expertise?: string;
+  location?: string;
+  socialLinks?: string[];
+  showLocalTime?: boolean;
+  timezone?: string;
 }
 
 export default function CreatorDashboardPage() {
@@ -156,14 +160,14 @@ export default function CreatorDashboardPage() {
     // Reset form to current creator data
     if (creator) {
       setEditForm({
-        name: creator.name,
-        bio: creator.bio || 'Student. Enthusiastic Programmer.',
-        pronouns: 'they/them',
-        location: 'Bangalore, Karnataka, India',
+        name: creator.name || '',
+        bio: creator.bio || '',
+        pronouns: creator.pronouns || 'they/them',
+        location: creator.location || '',
         website: creator.website || '',
         showProBadge: false,
-        showLocalTime: true,
-        socialLinks: ['https://www.linkedin.com/in/vinayakahshankara', '', '', '']
+        showLocalTime: creator.showLocalTime ?? true,
+        socialLinks: creator.socialLinks || ['', '', '', '']
       });
     }
     setIsEditMode(false);
@@ -199,14 +203,16 @@ export default function CreatorDashboardPage() {
               {/* Creator Info */}
               <div className="text-center mb-4">
                 <h2 className="text-lg font-bold text-textPrimary mb-1">
-                  {creator?.name || 'oFive'}
+                  {creator?.name || 'Creator'}
                 </h2>
                 <p className="text-xs text-textSecondary mb-3">
-                  {creator?.username || 'vinayakawac'} · {editForm.pronouns || 'they/them'}
+                  {creator?.username} {creator?.pronouns ? `· ${creator.pronouns}` : ''}
                 </p>
-                <p className="text-xs text-textPrimary mb-4 px-2">
-                  {editForm.bio || 'Student. Enthusiastic Programmer.'}
-                </p>
+                {creator?.bio && (
+                  <p className="text-xs text-textPrimary mb-4 px-2">
+                    {creator.bio}
+                  </p>
+                )}
                 <button
                   onClick={handleEditToggle}
                   className="inline-block w-full px-4 py-2 bg-neutral-900 border border-border rounded-md text-xs font-medium text-textPrimary hover:bg-neutral-800 transition-colors"
@@ -217,16 +223,16 @@ export default function CreatorDashboardPage() {
 
               {/* Additional Info */}
               <div className="space-y-2">
-                {editForm.location && (
+                {creator?.location && (
                   <div className="flex items-start gap-2 text-xs text-textSecondary">
                     <MapPin className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
-                    <span>{editForm.location}</span>
+                    <span>{creator.location}</span>
                   </div>
                 )}
-                {editForm.socialLinks[0] && (
+                {creator?.socialLinks?.[0] && (
                   <div className="flex items-center gap-2 text-xs text-textSecondary">
                     <Linkedin className="w-3.5 h-3.5 flex-shrink-0" />
-                    <span>{editForm.socialLinks[0].replace('https://www.linkedin.com/', '')}</span>
+                    <span>{creator.socialLinks[0].replace('https://www.linkedin.com/', '')}</span>
                   </div>
                 )}
               </div>

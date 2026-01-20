@@ -11,6 +11,13 @@ interface Creator {
   termsAccepted: boolean;
   projectCount: number;
   createdAt: string;
+  bio?: string;
+  pronouns?: string;
+  website?: string;
+  location?: string;
+  socialLinks?: string[];
+  showLocalTime?: boolean;
+  timezone?: string;
 }
 
 export default function CreatorAccountPage() {

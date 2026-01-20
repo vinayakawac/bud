@@ -31,14 +31,14 @@ export async function PUT(request: NextRequest) {
     const updatedCreator = await db.creator.update({
       where: { id: authPayload.creatorId },
       data: {
-        name: name || undefined,
-        bio: bio || undefined,
-        pronouns: pronouns || undefined,
-        website: website || undefined,
-        location: location || undefined,
-        socialLinks: socialLinks || undefined,
-        showLocalTime: showLocalTime ?? undefined,
-        timezone: timezone || undefined,
+        name: name !== undefined ? name : undefined,
+        bio: bio !== undefined ? bio : undefined,
+        pronouns: pronouns !== undefined ? pronouns : undefined,
+        website: website !== undefined ? website : undefined,
+        location: location !== undefined ? location : undefined,
+        socialLinks: socialLinks !== undefined ? socialLinks : undefined,
+        showLocalTime: showLocalTime !== undefined ? showLocalTime : undefined,
+        timezone: timezone !== undefined ? timezone : undefined,
       },
     });
 

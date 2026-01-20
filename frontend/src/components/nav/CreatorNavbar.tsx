@@ -35,7 +35,7 @@ export function CreatorNavbar() {
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
             <Image
-              src="/favicon.ico"
+              src="/favicon.svg"
               alt="O-Hub Logo"
               width={32}
               height={32}

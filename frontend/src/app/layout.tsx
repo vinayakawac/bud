@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: 'Browse and explore cutting-edge projects across various technologies',
   keywords: ['projects', 'portfolio', 'showcase', 'development'],
   icons: {
-    icon: '/favicon.ico',
+    icon: '/favicon.svg',
   },
 };
 

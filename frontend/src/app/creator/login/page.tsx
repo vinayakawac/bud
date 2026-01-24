@@ -146,20 +146,6 @@ export default function CreatorLoginPage() {
           </p>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="py-6 text-center">
-        <div className="flex items-center justify-center gap-2 text-gray-400 text-sm">
-          <Image
-            src="/favicon.svg"
-            alt="O-Hub"
-            width={20}
-            height={20}
-            className="opacity-50"
-          />
-          <span>© 2024-2026 O-HUB</span>
-        </div>
-      </footer>
     </div>
   );
 }

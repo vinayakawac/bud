@@ -165,75 +165,108 @@ export default function CreatorProjectsPage() {
               const firstImage = project.previewImages[0];
               const hasValidImage = firstImage && typeof firstImage === 'string' && (firstImage.startsWith('http://') || firstImage.startsWith('https://') || firstImage.startsWith('/'));
               
+              // Format date
+              const updatedDate = new Date(project.updatedAt).toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric',
+                year: 'numeric'
+              });
+
+              // Extract first line of description, clean it
+              const shortDesc = project.description
+                .split('\n')[0]
+                .replace(/^#+\s*/, '')
+                .replace(/[*_~`]/g, '')
+                .substring(0, 120);
+              
               return (
               <div
                 key={project.id}
-                className="bg-card border border-border rounded-lg overflow-hidden"
+                className="bg-card border border-border rounded-lg overflow-hidden flex flex-col h-[420px] hover:border-accent/50 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-0.5 transition-all duration-300"
               >
-                {hasValidImage && (
-                  <img
-                    src={firstImage}
-                    alt={project.title}
-                    className="w-full h-48 object-cover"
-                  />
-                )}
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs bg-accent bg-opacity-20 text-accent px-2 py-1 rounded">
+                {/* Thumbnail Section */}
+                <div className="relative h-44 overflow-hidden bg-gradient-to-br from-accent/20 to-purple-600/20 flex-shrink-0">
+                  {hasValidImage ? (
+                    <img
+                      src={firstImage}
+                      alt={project.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-5xl font-bold text-white/20">
+                        {project.title.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Category Badge */}
+                  <div className="absolute top-2.5 left-2.5">
+                    <span className="text-[0.6875rem] px-2.5 py-1 bg-black/80 backdrop-blur-sm border border-white/20 rounded text-white font-medium uppercase tracking-wide">
                       {project.category}
                     </span>
+                  </div>
+                </div>
+
+                {/* Main Content Section */}
+                <div className="flex-1 p-4 flex flex-col">
+                  {/* Title */}
+                  <h3 className="text-[1.0625rem] font-bold text-textPrimary truncate mb-1.5">
+                    {project.title}
+                  </h3>
+
+                  {/* Status Badge */}
+                  <div className="mb-3">
                     {project.isPublic ? (
-                      <span className="text-xs bg-green-500 bg-opacity-20 text-green-600 px-2 py-1 rounded">
+                      <span className="text-xs bg-green-500/20 text-green-500 px-2 py-0.5 rounded">
                         Published
                       </span>
                     ) : (
-                      <span className="text-xs bg-gray-500 bg-opacity-20 text-gray-600 px-2 py-1 rounded">
+                      <span className="text-xs bg-gray-500/20 text-gray-400 px-2 py-0.5 rounded">
                         Draft
                       </span>
                     )}
                   </div>
-                  <h3 className="text-xl font-semibold text-textPrimary mb-2">
-                    {project.title}
-                  </h3>
-                  <p className="text-textSecondary mb-2 line-clamp-3">
-                    {project.description}
+
+                  {/* Description */}
+                  <p className="text-[0.875rem] text-textSecondary leading-[1.45] line-clamp-2 mb-auto">
+                    {shortDesc}
                   </p>
-                  <p className="text-sm text-textSecondary mb-4">
-                    Tech: {project.techStack}
-                  </p>
-                  <div className="flex space-x-2">
-                    {project.isPublic ? (
-                      <Link
-                        href={`/projects/${project.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded text-center transition-colors"
-                        title="Preview as public users see it"
-                      >
-                        Preview
-                      </Link>
-                    ) : (
-                      <button
-                        disabled
-                        className="flex-1 bg-gray-400 text-gray-200 py-2 rounded text-center cursor-not-allowed"
-                        title="Publish to preview"
-                      >
-                        Preview
-                      </button>
-                    )}
+                </div>
+
+                {/* Footer with Actions */}
+                <div className="px-4 pb-4 flex gap-2 flex-shrink-0">
+                  {project.isPublic ? (
                     <Link
-                      href={`/creator/projects/${project.id}/edit`}
-                      className="flex-1 bg-accent text-white py-2 rounded text-center hover:opacity-90 transition-opacity"
+                      href={`/projects/${project.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 bg-accent/20 hover:bg-accent/30 text-accent py-2 rounded text-center text-sm font-medium transition-colors"
+                      title="Preview as public users see it"
                     >
-                      Edit
+                      Preview
                     </Link>
+                  ) : (
                     <button
-                      onClick={() => handleDelete(project.id)}
-                      className="px-4 py-2 border border-red-500 text-red-500 rounded hover:bg-red-500 hover:text-white transition-colors"
+                      disabled
+                      className="flex-1 bg-gray-500/20 text-gray-500 py-2 rounded text-center text-sm font-medium cursor-not-allowed"
+                      title="Publish to preview"
                     >
-                      Delete
+                      Preview
                     </button>
-                  </div>
+                  )}
+                  <Link
+                    href={`/creator/projects/${project.id}/edit`}
+                    className="flex-1 bg-accent text-white py-2 rounded text-center text-sm font-medium hover:opacity-90 transition-opacity"
+                  >
+                    Edit
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(project.id)}
+                    className="px-3 py-2 border border-red-500 text-red-500 rounded text-sm font-medium hover:bg-red-500 hover:text-white transition-colors"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
               );

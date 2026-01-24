@@ -442,7 +442,7 @@ export default function CreatorDashboardPage() {
                   )}
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-4 gap-6">
                   {filteredProjects.map((project) => (
                     <ProjectCard key={project.id} project={project} />
                   ))}

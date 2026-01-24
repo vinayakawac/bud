@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function CreatorLoginPage() {
   const router = useRouter();
@@ -45,25 +46,46 @@ export default function CreatorLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full">
-        <div className="bg-card border border-border rounded-lg p-8">
-          <h1 className="text-3xl font-bold text-textPrimary mb-2">
-            Creator Sign In
+    <div className="min-h-screen bg-[#f5f5f5] flex flex-col"
+      style={{
+        backgroundImage: 'radial-gradient(circle, #d1d1d1 1px, transparent 1px)',
+        backgroundSize: '20px 20px'
+      }}
+    >
+      {/* Header Logo */}
+      <div className="flex items-center justify-center pt-12 pb-8">
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/favicon.svg"
+            alt="O-Hub Logo"
+            width={28}
+            height={28}
+          />
+          <span className="text-xl font-bold text-gray-900">O-HUB</span>
+        </Link>
+      </div>
+
+      {/* Login Card */}
+      <div className="flex-1 flex items-start justify-center px-4 pb-12">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+          {/* Card Header Pill */}
+          <div className="flex justify-center mb-6">
+            <div className="w-12 h-1.5 bg-gray-200 rounded-full"></div>
+          </div>
+
+          <h1 className="text-2xl font-bold text-gray-900 text-center mb-8">
+            Sign in
           </h1>
-          <p className="text-textSecondary mb-6">
-            Access your creator dashboard
-          </p>
 
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6 text-sm">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-textPrimary mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email
               </label>
               <input
@@ -74,15 +96,23 @@ export default function CreatorLoginPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="w-full px-4 py-2 bg-bg border border-border rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
-                placeholder="creator@example.com"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="Enter email"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-textPrimary mb-2">
-                Password
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  Password
+                </label>
+                <Link
+                  href="/creator/forgot-password"
+                  className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <input
                 id="password"
                 type="password"
@@ -91,40 +121,45 @@ export default function CreatorLoginPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
-                className="w-full px-4 py-2 bg-bg border border-border rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-accent"
-                placeholder="••••••••"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="Enter password"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-accent text-white py-3 rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             >
-              {loading ? 'Signing In...' : 'Sign In'}
+              {loading ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
 
-          <p className="text-textSecondary text-center mt-6">
+          <p className="text-gray-500 text-center mt-6 text-sm">
             Don't have an account?{' '}
             <Link
               href="/creator/register"
-              className="text-accent hover:underline"
+              className="text-gray-900 font-medium hover:underline"
             >
-              Create Account
+              Sign up
             </Link>
           </p>
-
-          <div className="mt-6 pt-6 border-t border-border">
-            <Link
-              href="/creators/apply"
-              className="text-textSecondary hover:text-accent text-sm block text-center"
-            >
-              Learn about creator rules & terms
-            </Link>
-          </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="py-6 text-center">
+        <div className="flex items-center justify-center gap-2 text-gray-400 text-sm">
+          <Image
+            src="/favicon.svg"
+            alt="O-Hub"
+            width={20}
+            height={20}
+            className="opacity-50"
+          />
+          <span>© 2024-2026 O-HUB</span>
+        </div>
+      </footer>
     </div>
   );
 }

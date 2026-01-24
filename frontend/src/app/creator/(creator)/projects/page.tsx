@@ -165,13 +165,6 @@ export default function CreatorProjectsPage() {
               const firstImage = project.previewImages[0];
               const hasValidImage = firstImage && typeof firstImage === 'string' && (firstImage.startsWith('http://') || firstImage.startsWith('https://') || firstImage.startsWith('/'));
               
-              // Format date
-              const updatedDate = new Date(project.updatedAt).toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric',
-                year: 'numeric'
-              });
-
               // Extract first line of description, clean it
               const shortDesc = project.description
                 .split('\n')[0]

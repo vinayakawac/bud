@@ -10,7 +10,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'O-Hub - Portfolio Platform',
+  title: 'O-Hub',
   description: 'Browse and explore cutting-edge projects across various technologies',
   keywords: ['projects', 'portfolio', 'showcase', 'development'],
   icons: {

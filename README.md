@@ -1,4 +1,4 @@
-# O-Hub - Project Showcase Platform
+# O-Hub
 
 A full-stack platform for creators to showcase their projects, built with Next.js 14 and PostgreSQL.
 

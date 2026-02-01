@@ -162,3 +162,28 @@ model CollaborationInvite {
   @@index([projectId])
   @@map("collaboration_invites")
 }
+
+// ============================================================================
+// AUDIT & SECURITY
+// ============================================================================
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  actorId     String?  @map("actor_id")
+  actorType   String   @map("actor_type") // "visitor", "creator", "admin", "system"
+  actorEmail  String?  @map("actor_email")
+  action      String   // e.g., "project.created", "auth.login.success"
+  entityType  String   @map("entity_type") // e.g., "project", "creator", "admin"
+  entityId    String?  @map("entity_id")
+  metadata    String?  // JSON string for additional context
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  timestamp   DateTime @default(now())
+
+  @@index([actorId])
+  @@index([actorType])
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([timestamp])
+  @@map("audit_logs")
+}

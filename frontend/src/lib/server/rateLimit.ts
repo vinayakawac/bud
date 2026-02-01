@@ -20,7 +20,7 @@ interface RateLimitEntry {
   timestamps: number[]; // For sliding window
 }
 
-interface RateLimitConfig {
+export interface RateLimitConfig {
   windowMs: number;      // Time window in milliseconds
   maxRequests: number;   // Max requests per window
   skipSuccessfulRequests?: boolean;
@@ -254,11 +254,16 @@ export function createRateLimiter(configs: {
     // Return the most restrictive result
     const blocked = results.find(r => !r.result.allowed);
     if (blocked) {
-      return { allowed: false, blockedBy: blocked.name, ...blocked.result };
+      return { 
+        allowed: false as const, 
+        blockedBy: blocked.name, 
+        remaining: blocked.result.remaining,
+        resetAt: blocked.result.resetAt,
+      };
     }
 
     const minRemaining = Math.min(...results.map(r => r.result.remaining));
-    return { allowed: true, remaining: minRemaining, blockedBy: null };
+    return { allowed: true as const, remaining: minRemaining, blockedBy: null, resetAt: Date.now() + 60000 };
   };
 }
 

@@ -103,7 +103,7 @@ export function ensureInt(input: unknown, min: number, max: number, defaultValue
 // FIELD VALIDATORS
 // ============================================================================
 
-interface FieldValidator<T> {
+export interface FieldValidator<T> {
   validate(value: unknown, fieldName: string): ValidationResult<T>;
 }
 

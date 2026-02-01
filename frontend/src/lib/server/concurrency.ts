@@ -105,28 +105,30 @@ export async function checkVersion(
   id: string,
   expectedVersion: number | Date
 ): Promise<{ valid: boolean; currentVersion?: Date }> {
-  let entity: { updatedAt: Date } | null = null;
+  let versionDate: Date | null = null;
 
   switch (table) {
     case 'project':
-      entity = await db.project.findUnique({
+      const project = await db.project.findUnique({
         where: { id },
         select: { updatedAt: true },
       });
+      versionDate = project?.updatedAt || null;
       break;
     case 'creator':
-      entity = await db.creator.findUnique({
+      const creator = await db.creator.findUnique({
         where: { id },
         select: { createdAt: true },
       });
+      versionDate = creator?.createdAt || null;
       break;
   }
 
-  if (!entity) {
+  if (!versionDate) {
     return { valid: false };
   }
 
-  const currentVersion = entity.updatedAt || new Date();
+  const currentVersion = versionDate;
   
   if (expectedVersion instanceof Date) {
     const valid = currentVersion.getTime() === expectedVersion.getTime();
@@ -302,7 +304,7 @@ export async function safeUpsert<T>(
  * Atomic increment with race protection
  */
 export async function atomicIncrement(
-  table: 'project',
+  _table: 'project',
   id: string,
   field: string,
   amount: number = 1

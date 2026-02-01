@@ -9,7 +9,6 @@
  */
 
 import { db } from './db';
-import type { Prisma } from '@prisma/client';
 
 // ============================================================================
 // AUDIT LOG TYPES

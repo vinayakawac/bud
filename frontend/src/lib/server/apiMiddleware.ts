@@ -6,16 +6,15 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { validateSchema, ValidationSchema, validationError } from './validation';
-import { withRateLimit, rateLimitConfigs, RateLimitConfig } from './rateLimit';
+import { validateSchema, validationError, FieldValidator } from './validation';
+import { checkRateLimit, rateLimitConfigs, RateLimitConfig } from './rateLimit';
 import { 
   getAuthContext, 
-  requireRole, 
-  requirePermission,
+  hasPermission,
   Role, 
   Permission 
 } from './rbac';
-import { auditService, AuditAction } from './audit';
+import { auditService, AuditAction, ActorType, EntityType } from './audit';
 import { 
   checkIdempotency, 
   completeIdempotentRequest,
@@ -23,7 +22,7 @@ import {
 } from './concurrency';
 import { 
   success, 
-  badRequest, 
+  error as badRequest,
   unauthorized, 
   forbidden, 
   serverError, 
@@ -33,6 +32,11 @@ import {
 // ============================================================================
 // TYPES
 // ============================================================================
+
+// Schema definition type matching validation.ts
+type SchemaDefinition<T> = {
+  [K in keyof T]: FieldValidator<T[K]>;
+};
 
 interface MiddlewareOptions {
   // Rate limiting
@@ -46,7 +50,7 @@ interface MiddlewareOptions {
   };
   
   // Validation
-  schema?: ValidationSchema<Record<string, unknown>>;
+  schema?: SchemaDefinition<Record<string, unknown>>;
   
   // Idempotency
   idempotent?: boolean;
@@ -54,7 +58,7 @@ interface MiddlewareOptions {
   // Audit
   audit?: {
     action: AuditAction;
-    entityType: string;
+    entityType: EntityType;
     getEntityId?: (body: any, result: any) => string;
   };
 }
@@ -69,7 +73,7 @@ interface HandlerContext {
   params: Record<string, string>;
   auth: {
     id: string;
-    type: 'creator' | 'admin' | 'visitor';
+    type: ActorType;
     email?: string;
   } | null;
   ip: string;
@@ -116,14 +120,11 @@ export function createHandler<T>(
           ? rateLimitConfigs[options.rateLimit]
           : options.rateLimit;
           
-        const rateLimitCheck = await withRateLimit(
-          request,
-          config,
-          async () => null // Just check, don't execute yet
-        );
+        const rateLimitCheck = checkRateLimit(request, config);
         
         if (!rateLimitCheck.allowed) {
-          return rateLimited(rateLimitCheck.retryAfter);
+          const retryAfter = Math.ceil((rateLimitCheck.resetAt - Date.now()) / 1000);
+          return rateLimited(`Too many requests. Try again in ${retryAfter}s`);
         }
       }
 
@@ -133,29 +134,31 @@ export function createHandler<T>(
       if (options.auth?.required || options.auth?.role || options.auth?.permission) {
         const authContext = await getAuthContext(request);
         
-        if (!authContext.authenticated) {
+        if (!authContext.isAuthenticated) {
           return unauthorized('Authentication required');
         }
         
         auth = {
-          id: authContext.user!.id,
-          type: authContext.role as any,
-          email: authContext.user?.email,
+          id: authContext.userId!,
+          type: authContext.role === Role.ADMIN ? ActorType.ADMIN : ActorType.CREATOR,
+          email: authContext.email,
         };
 
-        // Role check
+        // Role check - verify user has required role or higher
         if (options.auth.role) {
-          const roleCheck = await requireRole(request, options.auth.role);
-          if (!roleCheck.authorized) {
-            return forbidden(roleCheck.message);
+          const roleHierarchy = [Role.VISITOR, Role.CREATOR, Role.ADMIN, Role.SUPER_ADMIN];
+          const requiredIndex = roleHierarchy.indexOf(options.auth.role);
+          const actualIndex = roleHierarchy.indexOf(authContext.role);
+          
+          if (actualIndex < requiredIndex) {
+            return forbidden(`Access denied. Required role: ${options.auth.role}`);
           }
         }
 
         // Permission check
         if (options.auth.permission) {
-          const permCheck = await requirePermission(request, options.auth.permission);
-          if (!permCheck.authorized) {
-            return forbidden(permCheck.message);
+          if (!hasPermission(authContext.role, options.auth.permission)) {
+            return forbidden('Insufficient permissions');
           }
         }
       }
@@ -173,7 +176,7 @@ export function createHandler<T>(
       // 4. Validation
       if (options.schema && body) {
         const validation = validateSchema(options.schema, body);
-        if (!validation.valid) {
+        if (!validation.success) {
           return validationError(validation.errors);
         }
         body = validation.data; // Use sanitized data

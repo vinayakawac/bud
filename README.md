@@ -25,7 +25,8 @@ O-Hub is a project portfolio platform where creators register, showcase their wo
 4. [Getting Started](#-getting-started)
 5. [API Reference](#-api-reference)
 6. [Architecture Decisions](#-architecture-decisions)
-7. [What I'd Do With More Time](#-what-id-do-with-more-time)
+7. [Resilience & Hardening](#-resilience--hardening)
+8. [What I'd Do With More Time](#-what-id-do-with-more-time)
 
 ---
 
@@ -345,7 +346,37 @@ For this scale, a separate backend adds complexity without benefit.
 
 ---
 
-## 🔮 What I'd Do With More Time
+## � Resilience & Hardening
+
+O-Hub is built with production resilience in mind. See [RESILIENCE.md](frontend/RESILIENCE.md) for full documentation.
+
+### Defense-in-Depth Summary
+
+| Layer | Implementation |
+|-------|----------------|
+| **Input Validation** | Schema validation at API boundary, sanitization |
+| **Rate Limiting** | Sliding window per-IP, progressive lockout |
+| **RBAC** | Fail-closed, explicit permissions, ownership checks |
+| **Error Handling** | React error boundaries, graceful degradation |
+| **Data Safety** | Soft delete with confirmation, cascade protection |
+| **Concurrency** | Optimistic locking, idempotency keys, distributed locks |
+| **Audit Trail** | All significant actions logged for compliance |
+
+### Key Files
+
+```
+src/lib/server/
+├── validation.ts    # Input validation & sanitization
+├── rateLimit.ts     # Rate limiting with backoff
+├── rbac.ts          # Role-based access control
+├── audit.ts         # Enterprise audit logging
+├── concurrency.ts   # Locks, idempotency, version checks
+└── softDelete.ts    # Safe deletion patterns
+```
+
+---
+
+## �🔮 What I'd Do With More Time
 
 ### Technical Improvements
 - [ ] **Redis** for session caching and pub/sub

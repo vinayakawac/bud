@@ -18,21 +18,24 @@ model Admin {
 }
 
 model Creator {
-  id               String    @id @default(uuid())
-  username         String    @unique
-  name             String
-  email            String    @unique
-  passwordHash     String    @map("password_hash")
-  isActive         Boolean   @default(true) @map("is_active")
-  termsAcceptedAt  DateTime? @map("terms_accepted_at")
-  createdAt        DateTime  @default(now()) @map("created_at")
-  bio              String?
-  pronouns         String?
-  website          String?
-  location         String?
-  socialLinks      String[]  @default([]) @map("social_links")
-  showLocalTime    Boolean   @default(true) @map("show_local_time")
-  timezone         String?
+  id                  String    @id @default(uuid())
+  username            String    @unique
+  name                String
+  email               String    @unique
+  passwordHash        String    @map("password_hash")
+  isActive            Boolean   @default(true) @map("is_active")
+  termsAcceptedAt     DateTime? @map("terms_accepted_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  bio                 String?
+  pronouns            String?
+  website             String?
+  location            String?
+  socialLinks         String[]  @default([]) @map("social_links")
+  showLocalTime       Boolean   @default(true) @map("show_local_time")
+  timezone            String?
+  // Soft delete
+  deletedAt           DateTime? @map("deleted_at")
+  deactivatedReason   String?   @map("deactivated_reason")
   
   projects                Project[]
   collaborations          ProjectCollaborator[]
@@ -42,6 +45,7 @@ model Creator {
   @@index([email])
   @@index([username])
   @@index([isActive])
+  @@index([deletedAt])
   @@map("creators")
 }
 
@@ -58,6 +62,8 @@ model Project {
   metadata      String    @default("{}")
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
+  // Soft delete
+  deletedAt     DateTime? @map("deleted_at")
   
   creator       Creator?  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   comments      Comment[]
@@ -68,18 +74,21 @@ model Project {
   @@index([category])
   @@index([createdAt])
   @@index([creatorId])
+  @@index([deletedAt])
   @@map("projects")
 }
 
 model Comment {
-  id          String   @id @default(uuid())
-  projectId   String   @map("project_id")
-  parentId    String?  @map("parent_id")
-  authorType  String   @default("user") @map("author_type") // "user" or "admin"
+  id          String    @id @default(uuid())
+  projectId   String    @map("project_id")
+  parentId    String?   @map("parent_id")
+  authorType  String    @default("user") @map("author_type") // "user" or "admin"
   name        String
   email       String
   content     String
-  createdAt   DateTime @default(now()) @map("created_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  // Soft delete
+  deletedAt   DateTime? @map("deleted_at")
   
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   parent      Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
@@ -88,22 +97,26 @@ model Comment {
   @@index([projectId])
   @@index([parentId])
   @@index([createdAt])
+  @@index([deletedAt])
   @@map("comments")
 }
 
 model Rating {
-  id        String   @id @default(uuid())
-  projectId String?  @map("project_id")
+  id        String    @id @default(uuid())
+  projectId String?   @map("project_id")
   rating    Int
   feedback  String?
-  ipHash    String   @map("ip_hash")
-  createdAt DateTime @default(now()) @map("created_at")
+  ipHash    String    @map("ip_hash")
+  createdAt DateTime  @default(now()) @map("created_at")
+  // Soft delete
+  deletedAt DateTime? @map("deleted_at")
   
   project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
   @@index([ipHash])
   @@index([createdAt])
+  @@index([deletedAt])
   @@map("ratings")
 }
 

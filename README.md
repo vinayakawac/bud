@@ -6,12 +6,7 @@ Welcome to O-Hub, a production-grade full-stack collaboration platform designed 
 
 ## Languages and Frameworks Used
 
-- **Next.js 14** - App Router with Server Components
-- **TypeScript** - Type-safe development
-- **PostgreSQL** - Relational database
-- **Prisma** - Type-safe ORM
-- **Tailwind CSS** - Utility-first styling
-- **React Query** - Server state management
+[![My Skills](https://skillicons.dev/icons?i=nextjs,ts,postgres,prisma,tailwind,react)](https://skillicons.dev)
 
 ---
 
@@ -43,4 +38,4 @@ Creators can invite other creators to collaborate on projects with invitation ma
 
 ---
 
-**Built by [Vinayak](https://github.com/vinayakawac)**
+**Built by [Vinayaka](https://github.com/vinayakawac)**
